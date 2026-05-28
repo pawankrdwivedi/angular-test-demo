@@ -1,0 +1,57 @@
+{
+  "name": "qa-javascript-framework",
+  "version": "1.0.0",
+  "description": "Production-ready, scalable, enterprise-grade Agentic AI driven automation framework using Playwright and Cucumber BDD",
+  "main": "run-tests.js",
+  "type": "module",
+  "scripts": {
+    "test": "node run-tests.js",
+    "test:cucumber": "node run-tests.js --cucumber",
+    "test:cucumber:tag": "node run-tests.js --cucumber --tags",
+    "test:cucumber:feature": "node run-tests.js --cucumber",
+    "test:cucumber:folder": "node run-tests.js --cucumber",
+    "test:playwright": "node run-tests.js --playwright",
+    "test:playwright:tag": "node run-tests.js --playwright --grep",
+    "test:playwright:spec": "node run-tests.js --playwright",
+    "test:playwright:folder": "node run-tests.js --playwright",
+    "test:playwright:ui": "npx playwright test --ui",
+    "test:all": "npm run test:cucumber && npm run test:playwright",
+    "generate:testcase": "node qe-framework-core/cli/TestCaseGenerator.js",
+    "inspect:selectors": "node qe-framework-core/cli/SelectorInspector.js",
+    "allure:generate": "node generate-allure.js",
+    "allure:open": "allure open test_results/reports/allure-report",
+    "allure": "npm run allure:generate && npm run allure:open",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.6.0",
+    "@faker-js/faker": "^8.4.1",
+    "ajv": "^8.16.0",
+    "ajv-formats": "^3.0.1",
+    "axios": "^1.7.2",
+    "csv-parse": "^5.5.6",
+    "dotenv": "^16.4.5",
+    "js-yaml": "^4.1.0",
+    "mysql2": "^3.10.0",
+    "oracledb": "^6.5.0",
+    "pg": "^8.12.0",
+    "playwright": "^1.44.1",
+    "qe-framework-core": "file:qe-framework-core-1.0.0.tgz",
+    "tedious": "^18.2.0",
+    "winston": "^3.13.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.44.1",
+    "allure-commandline": "^2.41.0",
+    "allure-cucumberjs": "^3.0.0-beta.10",
+    "allure-js-commons": "^3.0.0-beta.10",
+    "allure-playwright": "^3.9.0",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,21 @@
+import { Given, When, Then } from '@cucumber/cucumber';
+import CommonPage from '../pages/CommonPage.js';
+
+Given('user loads test data for {{sanitizedName}} {string}', function (testCaseId) {
+  this.loadExcelTestData('UI_TestData', testCaseId);
+});
+
+When('user navigates to Angular documentation page for {{sanitizedName}}', async function () {
+  this.angularPage = new CommonPage(this.page);
+  await this.angularPage.open();
+});
+
+When('user searches for query from test data for {{sanitizedName}}', async function () {
+  const query = this.testData.searchQuery || 'Component';
+  await this.angularPage.triggerSearch(query);
+});
+
+Then('search result dialog for {{sanitizedName}} should be visible', async function () {
+  const isVisible = await this.angularPage.isSearchResultBoxVisible();
+  this.softAssert.assertTrue(isVisible, 'Verify search results dropdown is visible');
+});

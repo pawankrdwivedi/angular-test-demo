@@ -1,0 +1,12 @@
+environment: qa
+ui:
+  baseUrl: https://angular.io
+api:
+  baseUrl: https://jsonplaceholder.typicode.com
+database:
+  host: localhost
+  port: 5432
+  username: test
+  password: test123
+  dbName: automation_qa
+  type: postgres
