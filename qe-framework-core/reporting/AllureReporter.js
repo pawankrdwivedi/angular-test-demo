@@ -1,8 +1,10 @@
 import fs from 'fs';
 import path from 'path';
+import os from 'os';
 import { fileURLToPath } from 'url';
 import logger from '../logger/Logger.js';
 import configManager from '../config/ConfigManager.js';
+import { resolveFromAppRoot } from '../utils/PathResolver.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +22,7 @@ const __dirname = path.dirname(__filename);
 class AllureReporter {
   constructor() {
     const resultsDir = process.env.DIR_TEST_RESULTS || 'test_results';
-    this.allureResultsDir = path.join(process.cwd(), resultsDir, 'allure-results');
+    this.allureResultsDir = resolveFromAppRoot(resultsDir, 'allure-results');
     this.environmentFile = path.join(this.allureResultsDir, 'environment.properties');
     this.initializeReporting();
   }
@@ -88,7 +90,7 @@ class AllureReporter {
       
       // Execution Configuration
       'Parallel Workers': String(execConfig?.parallel || 1),
-      'Test Timeout (ms)': String(execConfig?.timeout || 30000),
+      'Test Timeout (ms)': String(execConfig?.timeout),
       'Viewport Width': String(execConfig?.viewportWidth || 1280),
       'Viewport Height': String(execConfig?.viewportHeight || 720),
       
@@ -123,10 +125,10 @@ class AllureReporter {
    * @param {World} world - Cucumber world object
    * @param {string} name - Name/description for the attachment
    */
-  attachScreenshot(world, name = 'Screenshot') {
+  async attachScreenshot(world, name = 'Screenshot') {
     try {
       if (world && world.attach && world.page) {
-        const screenshotBuffer = world.page.screenshot({ fullPage: true });
+        const screenshotBuffer = await world.page.screenshot({ fullPage: true });
         if (screenshotBuffer) {
           world.attach(screenshotBuffer, 'image/png');
           logger.info(`Screenshot attached: ${name}`);
@@ -315,7 +317,7 @@ class AllureReporter {
         'Application': configManager.getApplication(),
         'Browser': configManager.getExecutionConfig()?.browser || 'N/A',
         'User': process.env.USER || process.env.USERNAME || 'N/A',
-        'Machine': require('os').hostname(),
+        'Machine': os.hostname(),
         ...summary,
       };
 

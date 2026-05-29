@@ -125,7 +125,8 @@ dirs.forEach(dir => {
 // Detect which runners to invoke based on cleanArgs
 const hasCucumberArgs = cleanArgs.some(arg =>
   arg.endsWith('.feature') ||
-  arg.includes('src/features') ||
+  arg.includes('features/') ||
+  arg.includes('features\\') ||
   arg.startsWith('@') ||
   arg === '--tags' ||
   arg === '-t'
@@ -133,7 +134,8 @@ const hasCucumberArgs = cleanArgs.some(arg =>
 
 const hasPlaywrightArgs = cleanArgs.some(arg =>
   arg.endsWith('.spec.js') ||
-  arg.includes('src/tests') ||
+  arg.includes('test/') ||
+  arg.includes('test\\') ||
   arg === '--grep' ||
   arg === '-g' ||
   arg === '--project'
@@ -166,7 +168,8 @@ for (let i = 0; i < cleanArgs.length; i++) {
   const arg = cleanArgs[i];
   if (
     !arg.endsWith('.spec.js') &&
-    !arg.includes('src/tests') &&
+    !arg.includes('test/') &&
+    !arg.includes('test\\') &&
     arg !== '--project'
   ) {
     if (arg.startsWith('@')) {
@@ -182,7 +185,8 @@ for (let i = 0; i < cleanArgs.length; i++) {
 
 const playwrightArgs = cleanArgs.filter(arg =>
   !arg.endsWith('.feature') &&
-  !arg.includes('src/features') &&
+  !arg.includes('features/') &&
+  !arg.includes('features\\') &&
   !arg.startsWith('@') &&
   arg !== '--tags' &&
   arg !== '-t'
@@ -210,12 +214,12 @@ const defaultArgs = [];
 const featuresDir = process.env.DIR_FEATURES || 'features';
 const stepDefinitionsDir = process.env.DIR_STEP_DEFINITIONS || 'step_definition';
 const supportDir = process.env.DIR_SUPPORT || 'support';
+const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
+const normalizedFeaturesDir = normalizePath(featuresDir);
+const defaultFeatureGlob = `${normalizedFeaturesDir}/**/*.feature`;
 
-if (!cucumberArgs.some(arg => arg.endsWith('.feature') || arg.includes(featuresDir))) {
-    defaultArgs.push(`${featuresDir}/feature/**/*.feature`);
-} else {
-    // Use all features for default application
-    defaultArgs.push(`${featuresDir}/**/*.feature`);
+if (!cucumberArgs.some(arg => arg.endsWith('.feature') || normalizePath(arg).startsWith(`${normalizedFeaturesDir}/`))) {
+    defaultArgs.push(defaultFeatureGlob);
 }
 
 // We rely on cucumber.yaml for all other default profiles and configurations.

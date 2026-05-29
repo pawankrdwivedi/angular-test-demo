@@ -4,12 +4,17 @@
  */
 
 import { Before } from '@cucumber/cucumber';
-import browserManager from '../../framework/browser/BrowserManager.js';
-import componentTestHelper from '../../framework/mock/ComponentTestHelper.js';
-import mockDataManager from '../../framework/mock/MockDataManager.js';
-import mockServiceInterceptor from '../../framework/mock/MockServiceInterceptor.js';
-import mockDataTemplates from '../../framework/mock/MockDataTemplates.js';
-import logger from '../../framework/logger/Logger.js';
+import browserManager from '../browser/BrowserManager.js';
+import componentTestHelper from './ComponentTestHelper.js';
+import mockDataManager from './MockDataManager.js';
+import mockServiceInterceptor from './MockServiceInterceptor.js';
+import mockDataTemplates from './MockDataTemplates.js';
+import logger from '../logger/Logger.js';
+import configManager from '../config/ConfigManager.js';
+
+function getConfiguredTimeout() {
+  return configManager.getExecutionConfig().timeout;
+}
 
 /**
  * EXAMPLE 1: Basic Product List Component Test
@@ -35,7 +40,7 @@ export async function example1_BasicProductList() {
   await page.goto('http://localhost:3000/products');
 
   // Wait for products to load
-  await page.waitForSelector('.product-item', { timeout: 5000 });
+  await page.waitForSelector('.product-item', { timeout: getConfiguredTimeout() });
 
   // Verify component
   const productItems = await page.locator('.product-item').count();
@@ -345,7 +350,7 @@ export async function example9_DashboardAnalytics() {
   await page.goto('http://localhost:3000/dashboard');
 
   // Wait for all components
-  await page.waitForSelector('.dashboard-widget', { timeout: 5000 });
+  await page.waitForSelector('.dashboard-widget', { timeout: getConfiguredTimeout() });
 
   // Verify metric cards
   const metrics = await page.locator('.metric-value').allTextContents();

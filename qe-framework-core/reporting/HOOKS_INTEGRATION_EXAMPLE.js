@@ -15,7 +15,7 @@ import configManager from '../../framework/config/ConfigManager.js';
 import allureReporter from '../../framework/reporting/AllureReporter.js';
 
 // Set global step/hook timeout from configuration
-const timeoutMs = configManager.getExecutionConfig().timeout || 30000;
+const timeoutMs = configManager.getExecutionConfig().timeout;
 setDefaultTimeout(timeoutMs);
 
 BeforeAll(async function () {
@@ -129,7 +129,7 @@ After(async function (scenario) {
       try {
         const screenshot = await this.page.screenshot({ fullPage: true });
         this.attach(screenshot, 'image/png');
-        allureReporter.attachScreenshot(this, 'Failure Screenshot');
+        await allureReporter.attachScreenshot(this, 'Failure Screenshot');
         logger.info('Failure screenshot attached to Cucumber and Allure report.');
       } catch (err) {
         logger.error(`Failed to capture screenshot: ${err.message}`);

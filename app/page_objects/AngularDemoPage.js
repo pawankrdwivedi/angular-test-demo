@@ -10,21 +10,26 @@ class AngularDemoPage extends BasePage {
     // Primary is intentionally broken to trigger self-healing
     this.searchButton = '#broken-search-button-id';
     this.searchButtonFallbacks = [
+      'button[aria-label*="Search" i]',
+      'button.adev-nav-button',
+      '[role="button"][aria-label*="Search" i]',
+      '.DocSearch-Button',
+      '.docs-search-button',
       'button.search-button', 
       'button:has-text("Search")',
-      'aria-label="Search"', 
       'button.docsearch-btn',
-      'button.adev-nav-button'
     ];
 
     this.searchInput = '#broken-search-input-id';
     this.searchInputFallbacks = [
+      'input[placeholder="Search docs"]',
+      'input[placeholder*="Search" i]',
+      'input.docs-text-field',
+      'input[aria-label*="Search" i]',
       'input[type="search"]',
       'input.search-input',
       'input.docsearch-input',
-      'input[placeholder="Search"]',
-      'input.docs-text-field',
-      'input[placeholder="Search docs"]'
+      'input.DocSearch-Input',
     ];
   }
 
@@ -43,15 +48,19 @@ class AngularDemoPage extends BasePage {
     await this.fill(this.searchInput, query, this.searchInputFallbacks);
     
     // Wait for stability
-    await this.page.waitForTimeout(1000); 
+    await this.waitForAngular();
   }
 
   async isSearchResultBoxVisible() {
-    return await this.isElementVisible('.docsearch-Dropdown', [
+    return await this.isElementVisible('.DocSearch-Dropdown', [
+      '.docsearch-Dropdown',
       '.search-results', 
+      '.DocSearch-Modal',
+      '.DocSearch-Container',
       'div.docsearch-modal',
       '.docs-search-results',
-      '.docs-search-container'
+      '.docs-search-container',
+      '[role="listbox"]'
     ]);
   }
 }

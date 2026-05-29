@@ -2,6 +2,7 @@ import logger from '../logger/Logger.js';
 import fs from 'fs';
 import path from 'path';
 import configManager from '../config/ConfigManager.js';
+import { resolveFromAppRoot } from '../utils/PathResolver.js';
 
 class AgenticAiManager {
   constructor() {
@@ -223,7 +224,7 @@ class AgenticAiManager {
 
   // Saves reports for local execution view
   saveAiReport(reportType, data) {
-    const aiReportsDir = path.join(process.cwd(), 'test_results', 'reports', 'ai_insights');
+    const aiReportsDir = resolveFromAppRoot(process.env.DIR_TEST_RESULTS || 'test_results', 'reports', 'ai_insights');
     if (!fs.existsSync(aiReportsDir)) {
       fs.mkdirSync(aiReportsDir, { recursive: true });
     }

@@ -13,6 +13,7 @@ export { default as componentTestHelper } from './mock/ComponentTestHelper.js';
 export { default as mockDataManager } from './mock/MockDataManager.js';
 export { default as mockDataTemplates } from './mock/MockDataTemplates.js';
 export { default as mockServiceInterceptor } from './mock/MockServiceInterceptor.js';
+export { default as networkRecordPlaybackManager } from './mock/NetworkRecordPlaybackManager.js';
 export { default as AngularDemoPage } from './pages/AngularDemoPage.js';
 export { default as BasePage } from './pages/BasePage.js';
 export { default as allureReporter } from './reporting/AllureReporter.js';

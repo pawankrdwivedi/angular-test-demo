@@ -2,6 +2,7 @@ import xlsx from 'xlsx';
 import path from 'path';
 import fs from 'fs';
 import logger from '../logger/Logger.js';
+import { resolveFromAppRoot } from '../utils/PathResolver.js';
 
 class TestAssetGenerator {
   /**
@@ -11,7 +12,7 @@ class TestAssetGenerator {
   generateAssets(configPath) {
     const resolvedConfigPath = path.isAbsolute(configPath)
       ? configPath
-      : path.join(process.cwd(), configPath);
+      : resolveFromAppRoot(configPath);
 
     if (!fs.existsSync(resolvedConfigPath)) {
       logger.warn(`Test assets config not found at: ${resolvedConfigPath}. Skipping asset generation.`);
@@ -23,7 +24,6 @@ class TestAssetGenerator {
       const configContent = fs.readFileSync(resolvedConfigPath, 'utf8');
       const config = JSON.parse(configContent);
 
-      const basePath = fs.existsSync(path.join(process.cwd(), 'app')) ? 'app' : '';
       const envDir = process.env.DIR_TEST_DATA;
 
       // 1. Process Excel Generation
@@ -34,9 +34,9 @@ class TestAssetGenerator {
           
           let resolvedFilePath;
           if (envDir && envExcel) {
-            resolvedFilePath = path.isAbsolute(envExcel) ? envExcel : path.join(process.cwd(), basePath, envDir, envExcel);
+            resolvedFilePath = path.isAbsolute(envExcel) ? envExcel : resolveFromAppRoot(envDir, envExcel);
           } else {
-            resolvedFilePath = path.isAbsolute(fileName) ? fileName : path.join(process.cwd(), fileName);
+            resolvedFilePath = path.isAbsolute(fileName) ? fileName : resolveFromAppRoot(fileName.replace(/^app[\\/]/, ''));
           }
           
           const fileDir = path.dirname(resolvedFilePath);
@@ -58,10 +58,10 @@ class TestAssetGenerator {
               const envTarget = process.env.FILE_TARGET_ETL_CSV;
               for (const row of sheetData) {
                 if (row.sourceFile && envDir && envSource) {
-                  row.sourceFile = path.join(basePath, envDir, envSource).replace(/\\/g, '/');
+                  row.sourceFile = path.join(envDir, envSource).replace(/\\/g, '/');
                 }
                 if (row.targetFile && envDir && envTarget) {
-                  row.targetFile = path.join(basePath, envDir, envTarget).replace(/\\/g, '/');
+                  row.targetFile = path.join(envDir, envTarget).replace(/\\/g, '/');
                 }
               }
             }
@@ -84,9 +84,9 @@ class TestAssetGenerator {
 
           let resolvedFilePath;
           if (envDir && envCsvName) {
-            resolvedFilePath = path.isAbsolute(envCsvName) ? envCsvName : path.join(process.cwd(), basePath, envDir, envCsvName);
+            resolvedFilePath = path.isAbsolute(envCsvName) ? envCsvName : resolveFromAppRoot(envDir, envCsvName);
           } else {
-            resolvedFilePath = path.isAbsolute(fileName) ? fileName : path.join(process.cwd(), fileName);
+            resolvedFilePath = path.isAbsolute(fileName) ? fileName : resolveFromAppRoot(fileName.replace(/^app[\\/]/, ''));
           }
           
           const fileDir = path.dirname(resolvedFilePath);

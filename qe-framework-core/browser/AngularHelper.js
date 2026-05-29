@@ -1,11 +1,16 @@
 import logger from '../logger/Logger.js';
+import configManager from '../config/ConfigManager.js';
 
 class AngularHelper {
   /**
    * Wait for Angular stability (all testabilities stable).
    * Useful for Angular application synchronization to prevent flaky tests.
    */
-  async waitForAngularStability(page, timeoutMs = 10000) {
+  getDefaultTimeout() {
+    return configManager.getExecutionConfig().timeout;
+  }
+
+  async waitForAngularStability(page, timeoutMs = this.getDefaultTimeout()) {
     logger.debug('Waiting for Angular application stability...');
     try {
       await page.waitForFunction(
@@ -37,7 +42,7 @@ class AngularHelper {
   /**
    * Wait for angular-routing navigation or animation completions
    */
-  async waitForAngularNavigation(page, urlPattern, timeoutMs = 15000) {
+  async waitForAngularNavigation(page, urlPattern, timeoutMs = this.getDefaultTimeout()) {
     logger.debug(`Waiting for Angular navigation to: ${urlPattern}`);
     await Promise.all([
       page.waitForURL(urlPattern, { timeout: timeoutMs }),

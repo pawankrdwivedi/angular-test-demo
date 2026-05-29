@@ -1,9 +1,12 @@
 import { Before, After, BeforeAll, AfterAll, Status, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
+import path from 'path';
 import { browserManager, agenticAiManager, dbClient, logger, configManager, allureReporter, SoftAssert } from 'qe-framework-core';
 
+const appRoot = path.basename(process.cwd()) === 'app' ? process.cwd() : path.join(process.cwd(), 'app');
+
 // Set global step/hook timeout from configuration (.env / YAML override)
-const timeoutMs = configManager.getExecutionConfig().timeout || 60000;
+const timeoutMs = configManager.getExecutionConfig().timeout;
 setDefaultTimeout(timeoutMs);
 
 BeforeAll(async function () {
@@ -134,8 +137,8 @@ After(async function (scenario) {
   const shouldAttachScreenshot = execConfig.screenshot === 'on' || (execConfig.screenshot === 'only-on-failure' && scenarioFailed);
   if (shouldAttachScreenshot) {
     const screenshotPath = path.join(
-      process.cwd(),
-      'test_results',
+      appRoot,
+      process.env.DIR_TEST_RESULTS || 'test_results',
       'reports',
       'screenshots',
       `${sanitizedScenarioName}_failed.png`
@@ -144,7 +147,6 @@ After(async function (scenario) {
       try {
         const screenshotBuffer = fs.readFileSync(screenshotPath);
         this.attach(screenshotBuffer, 'image/png');
-        allureReporter.attachScreenshot(this, scenarioFailed ? 'Failure Screenshot' : 'Scenario Screenshot');
         logger.info(`Attached screenshot: ${screenshotPath}`);
       } catch (err) {
         logger.error(`Failed to attach screenshot to report: ${err.message}`);
@@ -176,8 +178,8 @@ After(async function (scenario) {
   const shouldAttachTrace = execConfig.trace === 'on' || (execConfig.trace === 'retain-on-failure' && scenarioFailed);
   if (shouldAttachTrace) {
     const tracePath = path.join(
-      process.cwd(),
-      'test_results',
+      appRoot,
+      process.env.DIR_TEST_RESULTS || 'test_results',
       'reports',
       'traces',
       `${sanitizedScenarioName}_trace.zip`

@@ -2,6 +2,9 @@ import winston from 'winston';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
+import { getAppRoot, resolveFromAppRoot } from '../utils/PathResolver.js';
+
+const appRoot = getAppRoot();
 
 // Load environment variables first
 try {
@@ -9,7 +12,9 @@ try {
     path.join(process.cwd(), '.env'),
     path.join(process.cwd(), 'app', '.env'),
     path.join(process.cwd(), 'app.env'),
-    path.join(process.cwd(), 'app', 'app.env')
+    path.join(process.cwd(), 'app', 'app.env'),
+    path.join(appRoot, '.env'),
+    path.join(appRoot, 'app.env')
   ];
   for (const envPath of searchPaths) {
     if (fs.existsSync(envPath)) {
@@ -23,7 +28,7 @@ try {
 // Helper to load APP name from .env file
 function getAppName() {
   try {
-    const envPath = path.join(process.cwd(), '.env');
+    const envPath = path.join(appRoot, '.env');
     const appEnvPath = path.join(process.cwd(), 'app', '.env');
     let content = '';
     if (fs.existsSync(envPath)) {
@@ -98,7 +103,7 @@ console.warn = function(...args) {
 };
 
 // Ensure logs directory exists
-const logDirectory = path.join(process.cwd(), process.env.DIR_TEST_LOGS || 'test_logs');
+const logDirectory = resolveFromAppRoot(process.env.DIR_TEST_LOGS || 'test_logs');
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory, { recursive: true });
 }

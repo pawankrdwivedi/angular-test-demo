@@ -6,7 +6,7 @@ import logger from '../logger/Logger.js';
 const args = process.argv.slice(2);
 let url = null;
 let clickSelector = null;
-let timeoutVal = 5000;
+let timeoutVal = configManager.getExecutionConfig().timeout;
 
 for (let i = 0; i < args.length; i++) {
   const arg = args[i];
@@ -54,9 +54,9 @@ if (!url) {
       logger.info(`Clicking target element: "${clickSelector}"`);
       await page.click(clickSelector, { timeout: timeoutVal });
       
-      // Wait for transitions/animations to finish
-      logger.info(`Waiting 1.5 seconds for UI transitions to stabilize...`);
-      await page.waitForTimeout(1500);
+      // Wait for transitions/animations to finish using configured timeout.
+      logger.info(`Waiting for UI transitions to stabilize using configured timeout...`);
+      await page.waitForTimeout(timeoutVal);
     }
 
     logger.info(`Analyzing DOM structure for potential interactive elements...`);

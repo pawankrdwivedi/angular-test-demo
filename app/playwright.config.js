@@ -60,7 +60,7 @@ export default defineConfig({
   outputDir: path.join(resultsDir, 'playwright-artifacts'),
 
   // Timeout for each test in milliseconds
-  timeout: execConfig.timeout || 60000,
+  timeout: execConfig.timeout,
 
   // Run all tests in parallel
   fullyParallel: true,
@@ -72,7 +72,7 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
 
   // Opt out of parallel tests on CI.
-  workers: execConfig.parallel || undefined,
+  workers: execConfig.parallel,
 
   // Reporter to use
   reporter: [

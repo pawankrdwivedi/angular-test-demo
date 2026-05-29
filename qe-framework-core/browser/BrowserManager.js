@@ -4,6 +4,7 @@ import configManager from '../config/ConfigManager.js';
 import agenticAiManager from '../ai/AgenticAiManager.js';
 import path from 'path';
 import fs from 'fs';
+import networkRecordPlaybackManager from '../mock/NetworkRecordPlaybackManager.js';
 
 class BrowserManager {
   constructor() {
@@ -68,6 +69,10 @@ class BrowserManager {
     }
 
     this.page = await this.context.newPage();
+
+    // Initialize network record/playback interception
+    await networkRecordPlaybackManager.init(this.page, scenarioName);
+
     return { context: this.context, page: this.page };
   }
 
@@ -76,6 +81,9 @@ class BrowserManager {
     const sanitizedScenarioName = scenarioName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     if (this.context) {
+      // Save any recorded API mocks if recording mode was active
+      networkRecordPlaybackManager.saveRecordedMocks();
+
       // Handle screenshot
       if (execConfig.screenshot === 'on' || (execConfig.screenshot === 'only-on-failure' && scenarioFailed)) {
         try {

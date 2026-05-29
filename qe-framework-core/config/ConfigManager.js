@@ -162,12 +162,19 @@ class ConfigManager {
       this.config.execution = {};
     }
 
+    const getEnvValue = (key) => process.env[key] ?? this.envVars[key];
+    const parseEnvInt = (key, fallback, { min = Number.NEGATIVE_INFINITY } = {}) => {
+      const rawValue = getEnvValue(key);
+      const parsed = parseInt(rawValue ?? fallback, 10);
+      return Number.isNaN(parsed) || parsed < min ? fallback : parsed;
+    };
+
     // Set defaults from .env if not specified in YAML
     this.config.execution.browser = this.config.execution.browser || this.envVars.BROWSER || 'chromium';
     this.config.execution.headless = this.config.execution.headless !== undefined ? this.config.execution.headless : (this.envVars.HEADLESS === 'true');
     this.config.execution.slowMo = this.config.execution.slowMo !== undefined ? this.config.execution.slowMo : parseInt(this.envVars.SLOW_MO || '0');
-    this.config.execution.parallel = this.config.execution.parallel || parseInt(this.envVars.PARALLEL || '2');
-    this.config.execution.timeout = this.config.execution.timeout || parseInt(this.envVars.TIMEOUT || '30000');
+    this.config.execution.parallel = parseEnvInt('PARALLEL', this.config.execution.parallel || 2, { min: 1 });
+    this.config.execution.timeout = parseEnvInt('TIMEOUT', this.config.execution.timeout, { min: 1 });
     this.config.execution.viewportWidth = this.config.execution.viewportWidth || parseInt(this.envVars.VIEWPORT_WIDTH || '1280');
     this.config.execution.viewportHeight = this.config.execution.viewportHeight || parseInt(this.envVars.VIEWPORT_HEIGHT || '720');
     this.config.execution.screenshot = this.config.execution.screenshot || this.envVars.SCREENSHOT || 'only-on-failure';
@@ -190,6 +197,14 @@ class ConfigManager {
     if (process.env.API_URL) this.config.api.baseUrl = process.env.API_URL;
     if (process.env.DB_PASSWORD) this.config.database.password = process.env.DB_PASSWORD;
     if (process.env.DB_HOST) this.config.database.host = process.env.DB_HOST;
+    if (process.env.PARALLEL) {
+      const parallel = parseInt(process.env.PARALLEL, 10);
+      if (!Number.isNaN(parallel) && parallel > 0) this.config.execution.parallel = parallel;
+    }
+    if (process.env.TIMEOUT) {
+      const timeout = parseInt(process.env.TIMEOUT, 10);
+      if (!Number.isNaN(timeout) && timeout > 0) this.config.execution.timeout = timeout;
+    }
 
     // AI overrides
     if (process.env.AI_ENABLED !== undefined) {
