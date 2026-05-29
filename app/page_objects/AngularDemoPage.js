@@ -8,7 +8,7 @@ class AngularDemoPage extends BasePage {
     
     // Locators
     // Primary is intentionally broken to trigger self-healing
-    this.searchButton = '#broken-search-button-id';
+    this.searchButton = 'docs-text-field';//'#broken-search-button-id';
     this.searchButtonFallbacks = [
       'button[aria-label*="Search" i]',
       'button.adev-nav-button',

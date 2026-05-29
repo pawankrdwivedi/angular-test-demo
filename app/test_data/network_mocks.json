@@ -1,0 +1,158 @@
+{
+  "search_documentation_on_angular_website": [
+    {
+      "url": "https://angular.dev/assets/others/versions.json",
+      "method": "GET",
+      "requestHeaders": {
+        ":authority": "angular.dev",
+        ":method": "GET",
+        ":path": "/assets/others/versions.json",
+        ":scheme": "https",
+        "accept": "application/json, text/plain, */*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US,en;q=0.9",
+        "cache-control": "max-age=0",
+        "priority": "u=1, i",
+        "referer": "https://angular.dev/",
+        "sec-ch-ua": "\"Not/A)Brand\";v=\"99\", \"Chromium\";v=\"148\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36"
+      },
+      "requestData": "",
+      "response": {
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "alt-svc": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400",
+          "cache-control": "max-age=3600",
+          "content-encoding": "br",
+          "content-length": "164",
+          "content-type": "application/json",
+          "cross-origin-embedder-policy": "require-corp",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "cross-origin",
+          "date": "Fri, 29 May 2026 12:18:24 GMT",
+          "etag": "\"30159c33013bbddf0f2d4c73acd9f985e4e64ffb5179a263bf9b3e9f42964b27-br\"",
+          "last-modified": "Fri, 29 May 2026 11:39:45 GMT",
+          "strict-transport-security": "max-age=31556926",
+          "vary": "x-fh-requested-host, accept-encoding",
+          "x-cache": "HIT",
+          "x-cache-hits": "0",
+          "x-served-by": "cache-bom-vanm7210056-BOM",
+          "x-timer": "S1780057105.870844,VS0,VE2"
+        },
+        "body": "[\n  {\n    \"version\": \"next\",\n    \"url\": \"https://next.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v21\",\n    \"url\": \"https://v21.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v20\",\n    \"url\": \"https://v20.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v19\",\n    \"url\": \"https://v19.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v18\",\n    \"url\": \"https://v18.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v17\",\n    \"url\": \"https://v17.angular.io/docs\"\n  },\n  {\n    \"version\": \"v16\",\n    \"url\": \"https://v16.angular.io/docs\"\n  },\n  {\n    \"version\": \"v15\",\n    \"url\": \"https://v15.angular.io/docs\"\n  },\n  {\n    \"version\": \"v14\",\n    \"url\": \"https://v14.angular.io/docs\"\n  },\n  {\n    \"version\": \"v13\",\n    \"url\": \"https://v13.angular.io/docs\"\n  },\n  {\n    \"version\": \"v12\",\n    \"url\": \"https://v12.angular.io/docs\"\n  },\n  {\n    \"version\": \"v11\",\n    \"url\": \"https://v11.angular.io/docs\"\n  },\n  {\n    \"version\": \"v10\",\n    \"url\": \"https://v10.angular.io/docs\"\n  },\n  {\n    \"version\": \"v9\",\n    \"url\": \"https://v9.angular.io/docs\"\n  },\n  {\n    \"version\": \"v8\",\n    \"url\": \"https://v8.angular.io/docs\"\n  },\n  {\n    \"version\": \"v7\",\n    \"url\": \"https://v7.angular.io/docs\"\n  },\n  {\n    \"version\": \"v6\",\n    \"url\": \"https://v6.angular.io/docs\"\n  },\n  {\n    \"version\": \"v5\",\n    \"url\": \"https://v5.angular.io/docs\"\n  },\n  {\n    \"version\": \"v4\",\n    \"url\": \"https://v4.angular.io/docs\"\n  },\n  {\n    \"version\": \"v2\",\n    \"url\": \"https://v2.angular.io/docs\"\n  }\n]\n"
+      },
+      "timestamp": "2026-05-29T12:18:24.827Z"
+    }
+  ],
+  "execute_hybrid_testcase___tc002": [
+    {
+      "url": "https://angular.dev/assets/others/versions.json",
+      "method": "GET",
+      "requestHeaders": {
+        ":authority": "angular.dev",
+        ":method": "GET",
+        ":path": "/assets/others/versions.json",
+        ":scheme": "https",
+        "accept": "application/json, text/plain, */*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US",
+        "cache-control": "max-age=0",
+        "priority": "u=1, i",
+        "referer": "https://angular.dev/",
+        "sec-ch-ua": "\"Not/A)Brand\";v=\"99\", \"Chromium\";v=\"148\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.96 Safari/537.36"
+      },
+      "requestData": "",
+      "response": {
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "alt-svc": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400",
+          "cache-control": "max-age=3600",
+          "content-encoding": "br",
+          "content-length": "164",
+          "content-type": "application/json",
+          "cross-origin-embedder-policy": "require-corp",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "cross-origin",
+          "date": "Fri, 29 May 2026 12:20:45 GMT",
+          "etag": "\"30159c33013bbddf0f2d4c73acd9f985e4e64ffb5179a263bf9b3e9f42964b27-br\"",
+          "last-modified": "Fri, 29 May 2026 11:39:45 GMT",
+          "strict-transport-security": "max-age=31556926",
+          "vary": "x-fh-requested-host, accept-encoding",
+          "x-cache": "HIT",
+          "x-cache-hits": "6",
+          "x-served-by": "cache-bom-vanm7210052-BOM",
+          "x-timer": "S1780057246.856259,VS0,VE0"
+        },
+        "body": "[\n  {\n    \"version\": \"next\",\n    \"url\": \"https://next.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v21\",\n    \"url\": \"https://v21.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v20\",\n    \"url\": \"https://v20.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v19\",\n    \"url\": \"https://v19.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v18\",\n    \"url\": \"https://v18.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v17\",\n    \"url\": \"https://v17.angular.io/docs\"\n  },\n  {\n    \"version\": \"v16\",\n    \"url\": \"https://v16.angular.io/docs\"\n  },\n  {\n    \"version\": \"v15\",\n    \"url\": \"https://v15.angular.io/docs\"\n  },\n  {\n    \"version\": \"v14\",\n    \"url\": \"https://v14.angular.io/docs\"\n  },\n  {\n    \"version\": \"v13\",\n    \"url\": \"https://v13.angular.io/docs\"\n  },\n  {\n    \"version\": \"v12\",\n    \"url\": \"https://v12.angular.io/docs\"\n  },\n  {\n    \"version\": \"v11\",\n    \"url\": \"https://v11.angular.io/docs\"\n  },\n  {\n    \"version\": \"v10\",\n    \"url\": \"https://v10.angular.io/docs\"\n  },\n  {\n    \"version\": \"v9\",\n    \"url\": \"https://v9.angular.io/docs\"\n  },\n  {\n    \"version\": \"v8\",\n    \"url\": \"https://v8.angular.io/docs\"\n  },\n  {\n    \"version\": \"v7\",\n    \"url\": \"https://v7.angular.io/docs\"\n  },\n  {\n    \"version\": \"v6\",\n    \"url\": \"https://v6.angular.io/docs\"\n  },\n  {\n    \"version\": \"v5\",\n    \"url\": \"https://v5.angular.io/docs\"\n  },\n  {\n    \"version\": \"v4\",\n    \"url\": \"https://v4.angular.io/docs\"\n  },\n  {\n    \"version\": \"v2\",\n    \"url\": \"https://v2.angular.io/docs\"\n  }\n]\n"
+      },
+      "timestamp": "2026-05-29T12:20:46.047Z"
+    }
+  ],
+  "execute_hybrid_testcase___tc001": [
+    {
+      "url": "https://angular.dev/assets/others/versions.json",
+      "method": "GET",
+      "requestHeaders": {
+        ":authority": "angular.dev",
+        ":method": "GET",
+        ":path": "/assets/others/versions.json",
+        ":scheme": "https",
+        "accept": "application/json, text/plain, */*",
+        "accept-encoding": "gzip, deflate, br, zstd",
+        "accept-language": "en-US",
+        "cache-control": "max-age=0",
+        "priority": "u=1, i",
+        "referer": "https://angular.dev/",
+        "sec-ch-ua": "\"Not/A)Brand\";v=\"99\", \"Chromium\";v=\"148\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-origin",
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.7778.96 Safari/537.36"
+      },
+      "requestData": "",
+      "response": {
+        "status": 200,
+        "headers": {
+          "accept-ranges": "bytes",
+          "access-control-allow-origin": "*",
+          "alt-svc": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400",
+          "cache-control": "max-age=3600",
+          "content-encoding": "br",
+          "content-length": "164",
+          "content-type": "application/json",
+          "cross-origin-embedder-policy": "require-corp",
+          "cross-origin-opener-policy": "same-origin",
+          "cross-origin-resource-policy": "cross-origin",
+          "date": "Fri, 29 May 2026 12:20:45 GMT",
+          "etag": "\"30159c33013bbddf0f2d4c73acd9f985e4e64ffb5179a263bf9b3e9f42964b27-br\"",
+          "last-modified": "Fri, 29 May 2026 11:39:45 GMT",
+          "strict-transport-security": "max-age=31556926",
+          "vary": "x-fh-requested-host, accept-encoding",
+          "x-cache": "HIT",
+          "x-cache-hits": "3",
+          "x-served-by": "cache-bom-vanm7210095-BOM",
+          "x-timer": "S1780057245.447713,VS0,VE0"
+        },
+        "body": "[\n  {\n    \"version\": \"next\",\n    \"url\": \"https://next.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v21\",\n    \"url\": \"https://v21.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v20\",\n    \"url\": \"https://v20.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v19\",\n    \"url\": \"https://v19.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v18\",\n    \"url\": \"https://v18.angular.dev/overview\"\n  },\n  {\n    \"version\": \"v17\",\n    \"url\": \"https://v17.angular.io/docs\"\n  },\n  {\n    \"version\": \"v16\",\n    \"url\": \"https://v16.angular.io/docs\"\n  },\n  {\n    \"version\": \"v15\",\n    \"url\": \"https://v15.angular.io/docs\"\n  },\n  {\n    \"version\": \"v14\",\n    \"url\": \"https://v14.angular.io/docs\"\n  },\n  {\n    \"version\": \"v13\",\n    \"url\": \"https://v13.angular.io/docs\"\n  },\n  {\n    \"version\": \"v12\",\n    \"url\": \"https://v12.angular.io/docs\"\n  },\n  {\n    \"version\": \"v11\",\n    \"url\": \"https://v11.angular.io/docs\"\n  },\n  {\n    \"version\": \"v10\",\n    \"url\": \"https://v10.angular.io/docs\"\n  },\n  {\n    \"version\": \"v9\",\n    \"url\": \"https://v9.angular.io/docs\"\n  },\n  {\n    \"version\": \"v8\",\n    \"url\": \"https://v8.angular.io/docs\"\n  },\n  {\n    \"version\": \"v7\",\n    \"url\": \"https://v7.angular.io/docs\"\n  },\n  {\n    \"version\": \"v6\",\n    \"url\": \"https://v6.angular.io/docs\"\n  },\n  {\n    \"version\": \"v5\",\n    \"url\": \"https://v5.angular.io/docs\"\n  },\n  {\n    \"version\": \"v4\",\n    \"url\": \"https://v4.angular.io/docs\"\n  },\n  {\n    \"version\": \"v2\",\n    \"url\": \"https://v2.angular.io/docs\"\n  }\n]\n"
+      },
+      "timestamp": "2026-05-29T12:20:45.431Z"
+    }
+  ]
+}

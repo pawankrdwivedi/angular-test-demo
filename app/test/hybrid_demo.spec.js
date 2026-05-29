@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import CommonPage from '../page_objects/CommonPage.js';
-import { excelReader, configManager, ApiClient, dbClient, logger } from 'qe-framework-core';
+import { excelReader, configManager, ApiClient, dbClient, logger, networkRecordPlaybackManager } from 'qe-framework-core';
 import path from 'path';
 import fs from 'fs';
 
@@ -16,6 +16,14 @@ test.describe('Hybrid POM & Data-Driven Tests', () => {
   test.afterAll(async () => {
     logger.info('--- Disconnecting database connection pool for Playwright Tests ---');
     await dbClient.disconnect();
+  });
+
+  test.beforeEach(async ({ page }, testInfo) => {
+    await networkRecordPlaybackManager.init(page, testInfo.title);
+  });
+
+  test.afterEach(async () => {
+    networkRecordPlaybackManager.saveRecordedMocks();
   });
 
   // Data-driven hybrid tests matching Excel records
