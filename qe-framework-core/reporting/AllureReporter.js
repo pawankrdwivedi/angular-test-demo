@@ -64,6 +64,7 @@ class AllureReporter {
 
   /**
    * Build environment properties object from configuration and system info
+   * Only includes: Application, Environment, Browser, Base UI URL, Base API URL
    */
   buildEnvironmentProperties() {
     const execConfig = configManager.getExecutionConfig();
@@ -71,42 +72,11 @@ class AllureReporter {
     const apiConfig = configManager.getApiConfig();
 
     return {
-      // Application & Environment Info
       'Application': configManager.getApplication(),
       'Environment': configManager.getEnvironment().toUpperCase(),
-      'Test Runner': 'Cucumber / Playwright',
-      'Node.js Version': process.version,
-      'OS Platform': process.platform,
-      'OS Architecture': process.arch,
-      
-      // URL Configuration
+      'Browser': (execConfig?.browser || 'chromium').toUpperCase(),
       'Base UI URL': uiConfig?.baseUrl || 'N/A',
       'Base API URL': apiConfig?.baseUrl || 'N/A',
-      
-      // Browser Configuration
-      'Browser': (execConfig?.browser || 'chromium').toUpperCase(),
-      'Headless Mode': String(execConfig?.headless !== false),
-      'Slow Motion (ms)': String(execConfig?.slowMo || 0),
-      
-      // Execution Configuration
-      'Parallel Workers': String(execConfig?.parallel || 1),
-      'Test Timeout (ms)': String(execConfig?.timeout),
-      'Viewport Width': String(execConfig?.viewportWidth || 1280),
-      'Viewport Height': String(execConfig?.viewportHeight || 720),
-      
-      // Reporting Configuration
-      'Screenshot Mode': execConfig?.screenshot || 'only-on-failure',
-      'Video Recording': execConfig?.video || 'retain-on-failure',
-      'Trace Recording': execConfig?.trace || 'retain-on-failure',
-      
-      // AI Features
-      'AI Features Enabled': String(configManager.getAiConfig()?.enabled === true),
-      'AI Execution': String(configManager.getAiConfig()?.execution === true),
-      'AI Generation': String(configManager.getAiConfig()?.generation === true),
-      
-      // Execution Time
-      'Execution Date': new Date().toISOString(),
-      'Report Generated': new Date().toLocaleString(),
     };
   }
 

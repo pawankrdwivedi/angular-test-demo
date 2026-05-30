@@ -1,0 +1,23 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+  		"cucumber.features": [
+    		"app/features/feature/**/*.feature"
+  		],
+  		"cucumber.glue": [
+    		"app/features/step_definition/**/*.js",
+    		"app/features/support/**/*.js"
+  		],
+  		"cucumberautocomplete.steps": [
+    		"app/features/step_definition/**/*.js",
+    		"app/features/support/**/*.js"
+  		],
+  		"cucumberautocomplete.syncfeatures": "app/features/feature/**/*.feature",
+  		"cucumberautocomplete.strictGherkinCompletion": true
+	}
+}
+

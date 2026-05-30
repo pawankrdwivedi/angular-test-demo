@@ -72,8 +72,14 @@ This will automatically configure and link the packaged core library (`"qe-frame
 
 Next, download the Playwright browser binaries:
 ```bash
-npx playwright install chromium
+npx playwright install
 ```
+If there is SSL_CERT issue, execute below command in terminal.
+```bash
+$env:NODE_TLS_REJECT_UNAUTHORIZED='0'
+npx playwright install
+```
+
 
 ### 3. Configuration Settings
 Create or modify configuration settings in the `.env`, `app.env`, or environment-specific YAML files inside `config/`:

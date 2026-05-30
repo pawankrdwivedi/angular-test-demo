@@ -9,6 +9,7 @@ class AngularDemoPage extends BasePage {
     // Locators
     // Primary is intentionally broken to trigger self-healing
     this.searchButton = 'docs-text-field';//'#broken-search-button-id';
+    /*
     this.searchButtonFallbacks = [
       'button[aria-label*="Search" i]',
       'button.adev-nav-button',
@@ -19,8 +20,8 @@ class AngularDemoPage extends BasePage {
       'button:has-text("Search")',
       'button.docsearch-btn',
     ];
-
-    this.searchInput = '#broken-search-input-id';
+    */
+    this.searchInput = 'input.docs-text-field';//'#broken-search-input-id';
     this.searchInputFallbacks = [
       'input[placeholder="Search docs"]',
       'input[placeholder*="Search" i]',
@@ -42,7 +43,7 @@ class AngularDemoPage extends BasePage {
     logger.info(`Performing Angular Docs search for: "${query}"`);
     
     // Click Search Button (using self-healing locators)
-    await this.click(this.searchButton, this.searchButtonFallbacks);
+    await this.click(this.searchButton);//, this.searchButtonFallbacks);
     
     // Enter search text
     await this.fill(this.searchInput, query, this.searchInputFallbacks);

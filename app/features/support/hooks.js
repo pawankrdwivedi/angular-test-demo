@@ -22,7 +22,7 @@ BeforeAll(async function () {
   
   // Connect to DB pool initially if required
   try {
-    await dbClient.connect();
+    //await dbClient.connect();
   } catch (err) {
     logger.warn('Global Database connection could not be established. Falling back to Mock.');
   }
@@ -233,5 +233,5 @@ After(async function (scenario) {
 AfterAll(async function () {
   logger.info('Tearing down Global Test Execution');
   await browserManager.closeBrowser();
-  await dbClient.disconnect();
+  //await dbClient.disconnect();
 });

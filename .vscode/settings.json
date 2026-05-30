@@ -1,13 +1,15 @@
 {
   "cucumber.features": [
-    "app/features/**/*.feature"
+    "app/features/feature/**/*.feature"
   ],
   "cucumber.glue": [
-    "app/step_definition/**/*.js"
+    "app/features/step_definition/**/*.js",
+    "app/features/support/**/*.js"
   ],
   "cucumberautocomplete.steps": [
-    "app/step_definition/**/*.js"
+    "app/features/step_definition/**/*.js",
+    "app/features/support/**/*.js"
   ],
-  "cucumberautocomplete.syncfeatures": "app/features/**/*.feature",
+  "cucumberautocomplete.syncfeatures": "app/features/feature/**/*.feature",
   "cucumberautocomplete.strictGherkinCompletion": true
 }

@@ -5,6 +5,8 @@ import agenticAiManager from '../ai/AgenticAiManager.js';
 import path from 'path';
 import fs from 'fs';
 import networkRecordPlaybackManager from '../mock/NetworkRecordPlaybackManager.js';
+import { spawn } from 'child_process';
+import os from 'os';
 
 class BrowserManager {
   constructor() {
@@ -15,7 +17,7 @@ class BrowserManager {
 
   async launch() {
     const execConfig = configManager.getExecutionConfig();
-    const browserType = execConfig.browser || 'chromium';
+    const browserType = process.env.BROWSER_TYPE || execConfig.browser || 'chromium';
     const headless = execConfig.headless !== undefined ? execConfig.headless : true;
     const slowMo = execConfig.slowMo || 0;
 
@@ -28,6 +30,9 @@ class BrowserManager {
     };
 
     switch (browserType.toLowerCase()) {
+      case 'chrome':
+        this.browser = await this.launchLocalChrome();
+        break;
       case 'firefox':
         this.browser = await firefox.launch(options);
         break;
@@ -41,6 +46,98 @@ class BrowserManager {
     }
 
     return this.browser;
+  }
+
+  async launchLocalChrome() {
+    const debugPort = process.env.CHROME_DEBUG_PORT || '9222';
+    const cdpEndpoint = `http://localhost:${debugPort}`;
+
+    try {
+      logger.info(`Attempting to connect to locally installed Chrome at ${cdpEndpoint}`);
+      this.browser = await chromium.connectOverCDP(cdpEndpoint);
+      logger.info('Successfully connected to locally installed Chrome browser');
+      return this.browser;
+    } catch (error) {
+      logger.warn(`Failed to connect to Chrome at ${cdpEndpoint}: ${error.message}`);
+      logger.info('Attempting to launch Chrome with remote debugging port...');
+      
+      try {
+        await this.startChromeWithRemoteDebugging(debugPort);
+        // Wait a moment for Chrome to start
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        this.browser = await chromium.connectOverCDP(cdpEndpoint);
+        logger.info('Successfully launched and connected to Chrome via remote debugging');
+        return this.browser;
+      } catch (launchError) {
+        logger.error(`Failed to launch Chrome with debugging: ${launchError.message}`);
+        logger.info('Falling back to Playwright chromium');
+        return await chromium.launch({
+          headless: true,
+          args: ['--disable-dev-shm-usage', '--no-sandbox'],
+        });
+      }
+    }
+  }
+
+  async startChromeWithRemoteDebugging(debugPort) {
+    return new Promise((resolve, reject) => {
+      const chromeExecutable = process.env.CHROME_EXECUTABLE_PATH || this.findChromeExecutable();
+      
+      if (!chromeExecutable) {
+        reject(new Error('Chrome executable not found'));
+        return;
+      }
+
+      logger.info(`Starting Chrome from: ${chromeExecutable}`);
+      const chromeProcess = spawn(chromeExecutable, [
+        `--remote-debugging-port=${debugPort}`,
+        '--disable-background-networking',
+        '--disable-default-apps',
+        '--disable-extensions',
+        '--disable-extensions-file-access-check',
+        '--disable-extensions-http-throttling',
+        '--disable-gpu',
+        '--disable-preconnect',
+        '--disable-sync',
+      ], {
+        detached: true,
+        stdio: 'ignore',
+      });
+
+      // Unref the process so Node doesn't wait for it
+      chromeProcess.unref();
+      
+      logger.info('Chrome process started with remote debugging enabled');
+      resolve();
+    });
+  }
+
+  findChromeExecutable() {
+    const platform = os.platform();
+    const possiblePaths = [];
+
+    if (platform === 'win32') {
+      possiblePaths.push(
+        'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+        'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+        process.env.LOCALAPPDATA + '\\Google\\Chrome\\Application\\chrome.exe'
+      );
+    } else if (platform === 'darwin') {
+      possiblePaths.push('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome');
+    } else if (platform === 'linux') {
+      possiblePaths.push('/usr/bin/google-chrome', '/usr/bin/chromium', '/snap/bin/chromium');
+    }
+
+    for (const chromePath of possiblePaths) {
+      if (fs.existsSync(chromePath)) {
+        logger.info(`Found Chrome executable at: ${chromePath}`);
+        return chromePath;
+      }
+    }
+
+    logger.warn('Chrome executable not found in standard locations');
+    return null;
   }
 
   async createContext(scenarioName = 'scenario') {
@@ -140,8 +237,18 @@ class BrowserManager {
   }
 
   /**
-   * Self-Healing Locator utility.
-   * Resolves selector using a list of alternative locators if the primary selector fails.
+   * Self-Healing Locator utility with optional fallback strategy.
+   * 
+   * Behavior:
+   * - If only primarySelector provided (no fallbacks): Returns element if found, throws error if not found
+   * - If fallbacks provided: Executes full healing workflow with fallback selectors and AI healing
+   * 
+   * @param {Object} page - Playwright page object
+   * @param {string} primarySelector - Primary CSS/XPath selector to locate element
+   * @param {Array} fallbacks - Optional array of fallback selectors to try if primary fails
+   * @param {number} timeout - Timeout in milliseconds for element wait
+   * @returns {Promise<Locator>} - Playwright locator object
+   * @throws {Error} - If element not found and no fallbacks provided, or all strategies fail
    */
   async findElementWithSelfHealing(page, primarySelector, fallbacks = [], timeout = 5000) {
     try {
@@ -150,8 +257,16 @@ class BrowserManager {
       await element.waitFor({ state: 'attached', timeout });
       return element;
     } catch (error) {
+      // If no fallbacks provided, fail immediately
+      if (!fallbacks || fallbacks.length === 0) {
+        logger.error(`Primary selector "${primarySelector}" failed and no fallback selectors provided`);
+        throw error;
+      }
+
+      // If fallbacks provided, proceed with full self-healing workflow
       logger.warn(`Primary selector "${primarySelector}" failed. Commencing self-healing locator strategies...`);
 
+      // Try each fallback selector
       for (const fallback of fallbacks) {
         try {
           logger.info(`Trying fallback selector: "${fallback}"`);
@@ -185,7 +300,7 @@ class BrowserManager {
         logger.debug('Agentic AI Healing is disabled. Skipping AI-based selector recovery.');
       }
 
-      logger.error(`All locator strategies and self-healing failed for primary selector: "${primarySelector}"`);
+      logger.error(`All self-healing strategies failed for primary selector: "${primarySelector}"`);
       throw error;
     }
   }
