@@ -9,7 +9,6 @@ class AngularDemoPage extends BasePage {
     // Locators
     // Primary is intentionally broken to trigger self-healing
     this.searchButton = 'docs-text-field';//'#broken-search-button-id';
-    /*
     this.searchButtonFallbacks = [
       'button[aria-label*="Search" i]',
       'button.adev-nav-button',
@@ -20,7 +19,6 @@ class AngularDemoPage extends BasePage {
       'button:has-text("Search")',
       'button.docsearch-btn',
     ];
-    */
     this.searchInput = 'input.docs-text-field';//'#broken-search-input-id';
     this.searchInputFallbacks = [
       'input[placeholder="Search docs"]',
@@ -31,6 +29,17 @@ class AngularDemoPage extends BasePage {
       'input.search-input',
       'input.docsearch-input',
       'input.DocSearch-Input',
+    ];
+    this.searchResult='.DocSearch-Dropdown';
+    this.searchResultFallbacks=[
+      '.docs-search-results', 
+      '.docsearch-Dropdown', 
+      '.search-results', 
+      '.DocSearch-Modal', 
+      '.DocSearch-Container', 
+      'div.docsearch-modal',  
+      '.docs-search-container', 
+      '[role="listbox"]'
     ];
   }
 
@@ -43,7 +52,7 @@ class AngularDemoPage extends BasePage {
     logger.info(`Performing Angular Docs search for: "${query}"`);
     
     // Click Search Button (using self-healing locators)
-    await this.click(this.searchButton);//, this.searchButtonFallbacks);
+    await this.click(this.searchButton, this.searchButtonFallbacks);
     
     // Enter search text
     await this.fill(this.searchInput, query, this.searchInputFallbacks);
@@ -53,16 +62,7 @@ class AngularDemoPage extends BasePage {
   }
 
   async isSearchResultBoxVisible() {
-    return await this.isElementVisible('.DocSearch-Dropdown', [
-      '.docsearch-Dropdown',
-      '.search-results', 
-      '.DocSearch-Modal',
-      '.DocSearch-Container',
-      'div.docsearch-modal',
-      '.docs-search-results',
-      '.docs-search-container',
-      '[role="listbox"]'
-    ]);
+    return await this.isElementVisible(this.searchResult, this.searchResultFallbacks);
   }
 }
 

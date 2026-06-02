@@ -5,7 +5,7 @@ import agenticAiManager from '../ai/AgenticAiManager.js';
 import path from 'path';
 import fs from 'fs';
 import networkRecordPlaybackManager from '../mock/NetworkRecordPlaybackManager.js';
-import { spawn } from 'child_process';
+import { spawn, execSync } from 'child_process';
 import os from 'os';
 
 class BrowserManager {
@@ -13,6 +13,7 @@ class BrowserManager {
     this.browser = null;
     this.context = null;
     this.page = null;
+    this.chromeProcess = null;
   }
 
   async launch() {
@@ -31,7 +32,7 @@ class BrowserManager {
 
     switch (browserType.toLowerCase()) {
       case 'chrome':
-        this.browser = await this.launchLocalChrome();
+        this.browser = await chromium.launch({ ...options, channel: 'chrome' });
         break;
       case 'firefox':
         this.browser = await firefox.launch(options);
@@ -50,8 +51,10 @@ class BrowserManager {
 
   async launchLocalChrome() {
     const debugPort = process.env.CHROME_DEBUG_PORT || '9222';
-    const cdpEndpoint = `http://localhost:${debugPort}`;
-
+    const cdpEndpoint = `http://127.0.0.1:${debugPort}`;
+    const execConfig = configManager.getExecutionConfig();
+    const headless = execConfig.headless !== undefined ? execConfig.headless : true;
+ 
     try {
       logger.info(`Attempting to connect to locally installed Chrome at ${cdpEndpoint}`);
       this.browser = await chromium.connectOverCDP(cdpEndpoint);
@@ -62,7 +65,7 @@ class BrowserManager {
       logger.info('Attempting to launch Chrome with remote debugging port...');
       
       try {
-        await this.startChromeWithRemoteDebugging(debugPort);
+        await this.startChromeWithRemoteDebugging(debugPort, headless);
         // Wait a moment for Chrome to start
         await new Promise(resolve => setTimeout(resolve, 2000));
         
@@ -80,7 +83,7 @@ class BrowserManager {
     }
   }
 
-  async startChromeWithRemoteDebugging(debugPort) {
+  async startChromeWithRemoteDebugging(debugPort, headless = true) {
     return new Promise((resolve, reject) => {
       const chromeExecutable = process.env.CHROME_EXECUTABLE_PATH || this.findChromeExecutable();
       
@@ -88,10 +91,11 @@ class BrowserManager {
         reject(new Error('Chrome executable not found'));
         return;
       }
-
-      logger.info(`Starting Chrome from: ${chromeExecutable}`);
-      const chromeProcess = spawn(chromeExecutable, [
+ 
+      const tempUserDataDir = path.join(os.tmpdir(), `playwright_chrome_profile_${debugPort}`);
+      const args = [
         `--remote-debugging-port=${debugPort}`,
+        `--user-data-dir=${tempUserDataDir}`,
         '--disable-background-networking',
         '--disable-default-apps',
         '--disable-extensions',
@@ -100,10 +104,19 @@ class BrowserManager {
         '--disable-gpu',
         '--disable-preconnect',
         '--disable-sync',
-      ], {
+      ];
+
+      if (headless) {
+        args.push('--headless=new');
+      }
+
+      logger.info(`Starting Chrome from: ${chromeExecutable} (Headless: ${headless})`);
+      const chromeProcess = spawn(chromeExecutable, args, {
         detached: true,
         stdio: 'ignore',
       });
+
+      this.chromeProcess = chromeProcess;
 
       // Unref the process so Node doesn't wait for it
       chromeProcess.unref();
@@ -115,8 +128,55 @@ class BrowserManager {
 
   findChromeExecutable() {
     const platform = os.platform();
-    const possiblePaths = [];
 
+    // 1. Try finding it from the system PATH
+    try {
+      const cmd = platform === 'win32' ? 'where.exe chrome' : 'which google-chrome || which chromium || which chromium-browser';
+      const execResult = execSync(cmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+      const firstPath = execResult.split('\r\n')[0].split('\n')[0];
+      if (firstPath && fs.existsSync(firstPath)) {
+        logger.info(`Found Chrome via system lookup: ${firstPath}`);
+        return firstPath;
+      }
+    } catch (e) {
+      // ignore path lookup failure
+    }
+
+    // 2. Try querying the Windows Registry
+    if (platform === 'win32') {
+      try {
+        const regCmd = 'reg query "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\chrome.exe" /ve';
+        const regResult = execSync(regCmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        const match = regResult.match(/REG_SZ\s+(.*)/);
+        if (match && match[1]) {
+          const resolvedPath = match[1].trim().replace(/^"|"$/g, '');
+          if (fs.existsSync(resolvedPath)) {
+            logger.info(`Found Chrome via Windows registry: ${resolvedPath}`);
+            return resolvedPath;
+          }
+        }
+      } catch (e) {
+        // ignore registry lookup failure
+      }
+
+      try {
+        const regCmd = 'reg query "HKCU\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\chrome.exe" /ve';
+        const regResult = execSync(regCmd, { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim();
+        const match = regResult.match(/REG_SZ\s+(.*)/);
+        if (match && match[1]) {
+          const resolvedPath = match[1].trim().replace(/^"|"$/g, '');
+          if (fs.existsSync(resolvedPath)) {
+            logger.info(`Found Chrome via user registry: ${resolvedPath}`);
+            return resolvedPath;
+          }
+        }
+      } catch (e) {
+        // ignore user registry lookup failure
+      }
+    }
+
+    // 3. Fall back to standard possible locations
+    const possiblePaths = [];
     if (platform === 'win32') {
       possiblePaths.push(
         'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -131,7 +191,7 @@ class BrowserManager {
 
     for (const chromePath of possiblePaths) {
       if (fs.existsSync(chromePath)) {
-        logger.info(`Found Chrome executable at: ${chromePath}`);
+        logger.info(`Found Chrome executable in standard location: ${chromePath}`);
         return chromePath;
       }
     }
@@ -233,6 +293,19 @@ class BrowserManager {
       logger.info('Closing Playwright browser');
       await this.browser.close();
       this.browser = null;
+    }
+    if (this.chromeProcess) {
+      logger.info(`Killing spawned Chrome process (PID: ${this.chromeProcess.pid})`);
+      try {
+        if (os.platform() === 'win32') {
+          spawn('taskkill', ['/pid', this.chromeProcess.pid.toString(), '/f', '/t']);
+        } else {
+          process.kill(-this.chromeProcess.pid);
+        }
+      } catch (err) {
+        logger.debug(`Error killing Chrome process: ${err.message}`);
+      }
+      this.chromeProcess = null;
     }
   }
 

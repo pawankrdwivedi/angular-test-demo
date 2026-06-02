@@ -1,12 +1,9 @@
-environment: prod
-ui:
-  baseUrl: https://angular.io
-api:
-  baseUrl: https://jsonplaceholder.typicode.com
-database:
-  host: localhost
-  port: 5432
-  username: test
-  password: test123
-  dbName: automation_prod
-  type: postgres
+
+uiUrl: https://angular.io
+apiUrl: https://jsonplaceholder.typicode.com
+dbHost: localhost
+dbPort: 5432
+dbUser: test
+dbPassword: test123
+dbName: automation_qa
+dbType: postgres

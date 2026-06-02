@@ -5,10 +5,14 @@ import path from 'path';
 import fs from 'fs';
 
 const currentDir = process.cwd();
-if (path.basename(currentDir) !== 'app' || !fs.existsSync(path.join(currentDir, 'package.json'))) {
-  console.error('\n❌ Error: Playwright execution is only allowed from inside the "app" folder.\n');
-  process.exit(1);
+const isRoot = fs.existsSync(path.join(currentDir, 'app', 'package.json'));
+
+if (!isRoot && path.basename(currentDir) !== 'app') {
+  throw new Error('Playwright execution is only allowed from inside the "app" folder or project root.');
 }
+
+const baseAppPath = isRoot ? 'app' : '.';
+
 
 // Load environment variables first
 try {
@@ -50,11 +54,11 @@ const browserMap = {
 const targetBrowser = (execConfig.browser || 'chromium').toLowerCase();
 const activeProject = browserMap[targetBrowser] || browserMap.chromium;
 
-const resultsDir = process.env.DIR_TEST_RESULTS || 'test_results';
+const resultsDir = path.join(baseAppPath, process.env.DIR_TEST_RESULTS || 'test_results');
 
 export default defineConfig({
   // Directory where Playwright searches for tests
-  testDir: process.env.DIR_TEST || './test',
+  testDir: process.env.DIR_TEST || path.join(baseAppPath, 'test'),
 
   // Folder for test artifacts (screenshots, traces, videos, etc.)
   outputDir: path.join(resultsDir, 'playwright-artifacts'),

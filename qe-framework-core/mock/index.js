@@ -1,70 +1,25 @@
 /**
  * Mock Data Framework - Main Export
- * Provides unified access to all mock testing utilities
+ * Provides unified access to network recording and playback utilities.
  */
 
-export { default as mockDataManager } from './MockDataManager.js';
-export { default as mockServiceInterceptor } from './MockServiceInterceptor.js';
 export { default as componentTestHelper } from './ComponentTestHelper.js';
-export { default as mockDataTemplates } from './MockDataTemplates.js';
+export { default as networkRecordPlaybackManager } from './NetworkRecordPlaybackManager.js';
 
-// Export classes for direct use if needed
-export { MockDataManager } from './MockDataManager.js';
-export { MockServiceInterceptor } from './MockServiceInterceptor.js';
 export { ComponentTestHelper } from './ComponentTestHelper.js';
-export { MockDataTemplates } from './MockDataTemplates.js';
 
-/**
- * Convenience export for common usage patterns
- */
 export const MockFramework = {
-  // Initialize mock mode for a page
-  async initMockMode(page, options = {}) {
+  // Initialize mock network mode for a page (Record or Playback)
+  async initMockMode(page, scenarioName) {
     const { componentTestHelper } = await import('./ComponentTestHelper.js');
-    return componentTestHelper.initializeMockMode(page, options);
+    return componentTestHelper.initializeMockMode(page, scenarioName);
   },
 
-  // Setup a pre-built template
-  setupTemplate(templateName) {
-    const { mockDataTemplates } = await import('./MockDataTemplates.js');
-    const { componentTestHelper } = await import('./ComponentTestHelper.js');
-    const template = mockDataTemplates.getTemplate(templateName);
-    if (template) {
-      componentTestHelper.setupScenario(template);
-      return template;
-    }
-    return null;
-  },
-
-  // Create mock data
-  createMockData(dataType, options = {}) {
-    const { componentTestHelper } = await import('./ComponentTestHelper.js');
-    return componentTestHelper.createMockData(dataType, options);
-  },
-
-  // Register endpoint
-  registerEndpoint(url, generator, options = {}) {
-    const { componentTestHelper } = await import('./ComponentTestHelper.js');
-    return componentTestHelper.registerMockEndpoint(url, generator, options);
-  },
-
-  // Stop mock mode
+  // Stop mock mode and save recorded data
   async stopMocking() {
     const { componentTestHelper } = await import('./ComponentTestHelper.js');
     componentTestHelper.stopMockMode();
-  },
-
-  // Get statistics
-  async getStats() {
-    const { componentTestHelper } = await import('./ComponentTestHelper.js');
-    return componentTestHelper.getMockStats();
-  },
-
-  // List available templates
-  async listTemplates() {
-    const { mockDataTemplates } = await import('./MockDataTemplates.js');
-    return mockDataTemplates.listTemplates();
-  },
+  }
 };
 
 export default MockFramework;

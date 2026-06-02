@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 import path from 'path';
 import fs from 'fs';
+import { spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+import xlsx from 'xlsx';
 
 const currentDir = process.cwd();
 if (path.basename(currentDir) !== 'app' || !fs.existsSync(path.join(currentDir, 'package.json'))) {
@@ -26,24 +29,10 @@ try {
   // Ignore
 }
 
-import { spawn } from 'child_process';
-import { fileURLToPath } from 'url';
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 1. Run the test assets generator to guarantee data files are in place
-console.log('--- Setting up Test Assets (Excel & CSV) ---');
-try {
-  const configDir = process.env.DIR_CONFIG || 'config';
-  const { testAssetGenerator } = await import('qe-framework-core');
-  testAssetGenerator.generateAssets(path.join(configDir, 'test-assets.json'));
-} catch (err) {
-  console.error('Failed to generate test assets, proceeding anyway:', err.message);
-}
-console.log('--- Test Assets Configured Successfully ---\n');
-
-// 2. Parse command line arguments
+// Parse command line arguments
 const args = process.argv.slice(2);
 let env = 'sit-01'; // default environment
 let application = 'sample-application'; // default application
@@ -73,7 +62,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-// 3. Set environment variable for ConfigManager
+// Set environment variable for ConfigManager
 process.env.TEST_ENV = env;
 process.env.APPLICATION = application;
 console.log(`[Runner] Targeting Environment: ${env.toUpperCase()}`);
@@ -157,7 +146,6 @@ if (onlyCucumber) {
   runCucumber = false;
   runPlaywright = true;
 } else {
-  // If neither or both are explicitly specified, run both
   runCucumber = true;
   runPlaywright = true;
 }
@@ -173,7 +161,6 @@ for (let i = 0; i < cleanArgs.length; i++) {
     arg !== '--project'
   ) {
     if (arg.startsWith('@')) {
-      // If a tag is passed directly without --tags or -t preceding it, prepend --tags
       const prev = cucumberArgs[cucumberArgs.length - 1];
       if (prev !== '--tags' && prev !== '-t') {
         cucumberArgs.push('--tags');
@@ -192,7 +179,6 @@ const playwrightArgs = cleanArgs.filter(arg =>
   arg !== '-t'
 );
 
-// 4. Construct Cucumber CLI command
 function findCucumberBin() {
   let dir = process.cwd();
   while (dir) {
@@ -204,12 +190,10 @@ function findCucumberBin() {
     if (parent === dir) break;
     dir = parent;
   }
-  // Fall back to node module resolution or assume it is available globally / via npx path
   return 'cucumber-js';
 }
 const cucumberBin = findCucumberBin();
 
-// We conditionally inject the default features path only if no specific features path is specified.
 const defaultArgs = [];
 const featuresDir = process.env.DIR_FEATURES || 'features';
 const stepDefinitionsDir = process.env.DIR_STEP_DEFINITIONS || 'step_definition';
@@ -217,16 +201,122 @@ const supportDir = process.env.DIR_SUPPORT || 'support';
 const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
 const normalizedFeaturesDir = normalizePath(featuresDir);
 const defaultFeatureGlob = `${normalizedFeaturesDir}/**/*.feature`;
+const generatedFeaturesDir = path.join(resultsDir, 'generated-features');
 
-if (!cucumberArgs.some(arg => arg.endsWith('.feature') || normalizePath(arg).startsWith(`${normalizedFeaturesDir}/`))) {
-    defaultArgs.push(defaultFeatureGlob);
+function findMatchingSheetName(workbook, sheetName) {
+  return workbook.SheetNames.find(
+    name => name.toLowerCase().replace(/_/g, '') === sheetName.toLowerCase().replace(/_/g, '')
+  );
 }
 
-// We rely on cucumber.yaml for all other default profiles and configurations.
-// We pass finalArgs directly to the spawned process, and dynamically inject DIR values to override cucumber.yaml
+function getSheetNameForFeature(featureContent) {
+  if (/user loads UI test data/i.test(featureContent)) return 'UI_test_data';
+  if (/user loads API test data|customer test data/i.test(featureContent)) return 'API_test_data';
+  if (/user loads ETL test data|ETL test data/i.test(featureContent)) return 'ETL_test_data';
+  return null;
+}
+
+function formatExamplesTable(rows) {
+  const headers = Object.keys(rows[0] || {});
+  const tableRows = [headers, ...rows.map(row => headers.map(header => row[header]))];
+  const widths = headers.map((_, index) =>
+    Math.max(...tableRows.map(row => String(row[index] ?? '').length))
+  );
+
+  return tableRows
+    .map(row => `      | ${row.map((value, index) => String(value ?? '').padEnd(widths[index])).join(' | ')} |`)
+    .join('\n');
+}
+
+function expandFeatureExamplesFromExcel(featurePath, workbook) {
+  const featureContent = fs.readFileSync(featurePath, 'utf8');
+  const sheetName = getSheetNameForFeature(featureContent);
+  if (!sheetName) return featureContent;
+
+  const matchedSheetName = findMatchingSheetName(workbook, sheetName);
+  if (!matchedSheetName) return featureContent;
+
+  const rows = xlsx.utils.sheet_to_json(workbook.Sheets[matchedSheetName], { defval: '' });
+  if (rows.length === 0) return featureContent;
+
+  return featureContent.replace(
+    /(^[ \t]*Examples:\s*\r?\n)([ \t]*\|[^\r\n]*TestCaseID[^\r\n]*\|\s*\r?\n)((?:[ \t]*\|[^\r\n]*\|\s*(?:\r?\n|$))+)/gim,
+    (match, examplesLine, headerLine, bodyBlock) => {
+      const testCaseIds = bodyBlock
+        .trim()
+        .split(/\r?\n/)
+        .map(line => line.split('|').map(cell => cell.trim()).filter(Boolean)[0])
+        .filter(Boolean);
+
+      const selectedRows = testCaseIds.length === 1
+        ? rows
+        : rows.filter(row =>
+            testCaseIds.some(id =>
+              String(row.TestCaseID || row.testCaseId || row.testcaseid || '').trim().toLowerCase() === String(id).toLowerCase()
+            )
+          );
+
+      if (selectedRows.length === 0) return match;
+      return `${examplesLine}${formatExamplesTable(selectedRows)}\n`;
+    }
+  );
+}
+
+function collectFeatureFiles(rootDir) {
+  const files = [];
+  if (!fs.existsSync(rootDir)) return files;
+
+  for (const entry of fs.readdirSync(rootDir, { withFileTypes: true })) {
+    const entryPath = path.join(rootDir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...collectFeatureFiles(entryPath));
+    } else if (entry.isFile() && entry.name.endsWith('.feature')) {
+      files.push(entryPath);
+    }
+  }
+
+  return files;
+}
+
+function prepareGeneratedFeatures() {
+  const testDataDir = process.env.DIR_TEST_DATA || 'test_data';
+  const excelFileName = process.env.FILE_TEST_DATA_EXCEL || 'test-data.xlsx';
+  const excelPath = path.join(process.cwd(), testDataDir, excelFileName);
+  const sourceFeaturesPath = path.join(process.cwd(), featuresDir);
+
+  if (!fs.existsSync(excelPath) || !fs.existsSync(sourceFeaturesPath)) {
+    return featuresDir;
+  }
+
+  if (fs.existsSync(generatedFeaturesDir)) {
+    fs.rmSync(generatedFeaturesDir, { recursive: true, force: true });
+  }
+  fs.mkdirSync(generatedFeaturesDir, { recursive: true });
+
+  const workbook = xlsx.readFile(excelPath);
+  const featureFiles = collectFeatureFiles(sourceFeaturesPath);
+
+  for (const featureFile of featureFiles) {
+    const relativePath = path.relative(sourceFeaturesPath, featureFile);
+    const targetPath = path.join(generatedFeaturesDir, relativePath);
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+    fs.writeFileSync(targetPath, expandFeatureExamplesFromExcel(featureFile, workbook), 'utf8');
+  }
+
+  console.log(`[Runner] Generated data-driven feature files in: ${generatedFeaturesDir}`);
+  return path.relative(process.cwd(), generatedFeaturesDir).replace(/\\/g, '/');
+}
+
+const executionFeaturesDir = runCucumber ? prepareGeneratedFeatures() : featuresDir;
+const normalizedExecutionFeaturesDir = normalizePath(executionFeaturesDir);
+const executionFeatureGlob = `${normalizedExecutionFeaturesDir}/**/*.feature`;
+
+if (!cucumberArgs.some(arg => arg.endsWith('.feature') || normalizePath(arg).startsWith(`${normalizedFeaturesDir}/`))) {
+    defaultArgs.push(executionFeatureGlob);
+}
+
 const finalArgs = [...defaultArgs, ...cucumberArgs];
 
-// Dynamic override of step definition, support paths and Allure/HTML results folder
 if (!finalArgs.includes('--import')) {
   const stepDefsPath = stepDefinitionsDir.startsWith('features') || stepDefinitionsDir.startsWith('feature')
     ? stepDefinitionsDir
@@ -286,7 +376,6 @@ function runPlaywrightTests() {
   });
 }
 
-// 5. Execution Flow Coordination
 async function main() {
   let cucumberCode = 0;
   let playwrightCode = 0;
@@ -295,7 +384,6 @@ async function main() {
     cucumberCode = await runCucumberTests();
   }
 
-  // Only run Playwright if Cucumber passed (matching the chained '&&' behavior)
   if (runPlaywright && cucumberCode === 0) {
     playwrightCode = await runPlaywrightTests();
   }

@@ -67,10 +67,11 @@ class ConfigManager {
       }
     }
 
-    // 3. Check ENVIRONMENT variable from .env file
-    if (this.envVars.ENVIRONMENT) {
-      logger.info(`Environment determined from .env file: ${this.envVars.ENVIRONMENT}`);
-      return this.envVars.ENVIRONMENT.toLowerCase();
+    // 3. Check ENVIRONMENT/ENV variable from .env file
+    const envFromFile = this.envVars.ENVIRONMENT || this.envVars.ENV;
+    if (envFromFile) {
+      logger.info(`Environment determined from .env file: ${envFromFile}`);
+      return envFromFile.toLowerCase();
     }
 
     // 4. Default to qa
@@ -100,10 +101,11 @@ class ConfigManager {
       }
     }
 
-    // 3. Check APPLICATION variable from .env file
-    if (this.envVars.APPLICATION) {
-      logger.info(`Application determined from .env file: ${this.envVars.APPLICATION}`);
-      return this.envVars.APPLICATION.toLowerCase();
+    // 3. Check APPLICATION/APP variable from .env file
+    const applicationFromFile = this.envVars.APPLICATION || this.envVars.APP;
+    if (applicationFromFile) {
+      logger.info(`Application determined from .env file: ${applicationFromFile}`);
+      return applicationFromFile.toLowerCase();
     }
 
     // 4. Default to 'default' (uses root level config files)
@@ -144,6 +146,7 @@ class ConfigManager {
       logger.info(`Loading configuration for application: ${this.application}, environment: ${this.env.toUpperCase()}, source: ${configSource}`);
       const fileContents = fs.readFileSync(configFilePath, 'utf8');
       this.config = yaml.load(fileContents);
+      this.normalizeConfigShape();
       
       // Apply .env defaults for execution settings
       this.applyEnvDefaults();
@@ -154,6 +157,31 @@ class ConfigManager {
       logger.error(`Failed to load configuration: ${error.message}`);
       throw error;
     }
+  }
+
+  normalizeConfigShape() {
+    if (!this.config || typeof this.config !== 'object') {
+      this.config = {};
+    }
+
+    if (!this.config.ui) {
+      this.config.ui = {};
+    }
+    if (!this.config.api) {
+      this.config.api = {};
+    }
+    if (!this.config.database) {
+      this.config.database = {};
+    }
+
+    this.config.ui.baseUrl = this.config.ui.baseUrl || this.config.uiUrl;
+    this.config.api.baseUrl = this.config.api.baseUrl || this.config.apiUrl;
+    this.config.database.host = this.config.database.host || this.config.dbHost;
+    this.config.database.port = this.config.database.port || this.config.dbPort;
+    this.config.database.user = this.config.database.user || this.config.dbUser;
+    this.config.database.password = this.config.database.password || this.config.dbPassword;
+    this.config.database.name = this.config.database.name || this.config.dbName;
+    this.config.database.type = this.config.database.type || this.config.dbType;
   }
 
   applyEnvDefaults() {
@@ -170,25 +198,25 @@ class ConfigManager {
     };
 
     // Set defaults from .env if not specified in YAML
-    this.config.execution.browser = this.config.execution.browser || this.envVars.BROWSER || 'chromium';
-    this.config.execution.headless = this.config.execution.headless !== undefined ? this.config.execution.headless : (this.envVars.HEADLESS === 'true');
-    this.config.execution.slowMo = this.config.execution.slowMo !== undefined ? this.config.execution.slowMo : parseInt(this.envVars.SLOW_MO || '0');
+    this.config.execution.browser = this.config.execution.browser || getEnvValue('BROWSER') || 'chromium';
+    this.config.execution.headless = this.config.execution.headless !== undefined ? this.config.execution.headless : (getEnvValue('HEADLESS') === 'true');
+    this.config.execution.slowMo = this.config.execution.slowMo !== undefined ? this.config.execution.slowMo : parseInt(getEnvValue('SLOW_MO') || '0');
     this.config.execution.parallel = parseEnvInt('PARALLEL', this.config.execution.parallel || 2, { min: 1 });
     this.config.execution.timeout = parseEnvInt('TIMEOUT', this.config.execution.timeout, { min: 1 });
-    this.config.execution.viewportWidth = this.config.execution.viewportWidth || parseInt(this.envVars.VIEWPORT_WIDTH || '1280');
-    this.config.execution.viewportHeight = this.config.execution.viewportHeight || parseInt(this.envVars.VIEWPORT_HEIGHT || '720');
-    this.config.execution.screenshot = this.config.execution.screenshot || this.envVars.SCREENSHOT || 'only-on-failure';
-    this.config.execution.video = this.config.execution.video || this.envVars.VIDEO || 'retain-on-failure';
-    this.config.execution.trace = this.config.execution.trace || this.envVars.TRACE || 'retain-on-failure';
+    this.config.execution.viewportWidth = this.config.execution.viewportWidth || parseInt(getEnvValue('VIEWPORT_WIDTH') || '1280');
+    this.config.execution.viewportHeight = this.config.execution.viewportHeight || parseInt(getEnvValue('VIEWPORT_HEIGHT') || '720');
+    this.config.execution.screenshot = this.config.execution.screenshot || getEnvValue('SCREENSHOT') || 'only-on-failure';
+    this.config.execution.video = this.config.execution.video || getEnvValue('VIDEO') || 'retain-on-failure';
+    this.config.execution.trace = this.config.execution.trace || getEnvValue('TRACE') || 'retain-on-failure';
 
     // Apply .env defaults to AI config if not already set in YAML
     if (!this.config.ai) {
       this.config.ai = {};
     }
   
-    this.config.ai.enabled = this.config.ai.enabled !== undefined ? this.config.ai.enabled : (this.envVars.AI_ENABLED === 'true');
-    this.config.ai.execution = this.config.ai.execution !== undefined ? this.config.ai.execution : (this.envVars.AI_EXECUTION === 'true');
-    this.config.ai.generation = this.config.ai.generation !== undefined ? this.config.ai.generation : (this.envVars.AI_GENERATION === 'true');
+    this.config.ai.enabled = this.config.ai.enabled !== undefined ? this.config.ai.enabled : (getEnvValue('AI_ENABLED') === 'true');
+    this.config.ai.execution = this.config.ai.execution !== undefined ? this.config.ai.execution : (getEnvValue('AI_EXECUTION') === 'true');
+    this.config.ai.generation = this.config.ai.generation !== undefined ? this.config.ai.generation : (getEnvValue('AI_GENERATION') === 'true');
   }
 
   overrideWithEnvVariables() {
