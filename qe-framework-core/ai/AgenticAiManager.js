@@ -122,10 +122,10 @@ class AgenticAiManager {
     const impactedPaths = [];
     modifiedFiles.forEach(file => {
       if (file.includes('Customer')) {
-        impactedPaths.push('app/features/customer_validation.feature');
+        impactedPaths.push(resolveFromAppRoot('features', 'customer_validation.feature'));
       }
       if (file.includes('Angular')) {
-        impactedPaths.push('app/features/demo_angular_ui.feature');
+        impactedPaths.push(resolveFromAppRoot('features', 'demo_angular_ui.feature'));
       }
     });
 

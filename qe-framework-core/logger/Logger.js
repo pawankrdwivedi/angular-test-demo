@@ -6,15 +6,37 @@ import { getAppRoot, resolveFromAppRoot } from '../utils/PathResolver.js';
 
 const appRoot = getAppRoot();
 
-// Load environment variables first
+// Detect APP name from existing env files before loading dotenv
 try {
+  // If APP already provided via environment, keep it
+  if (!process.env.APP) {
+    const candidateEnvPaths = [
+      path.join(process.cwd(), '.env'),
+      path.join(process.cwd(), 'app', '.env'),
+      path.join(process.cwd(), 'app.env'),
+      path.join(process.cwd(), 'app', 'app.env'),
+    ];
+    for (const p of candidateEnvPaths) {
+      if (fs.existsSync(p)) {
+        const content = fs.readFileSync(p, 'utf8');
+        const match = content.match(/^APP\s*=\s*(.+)$/m);
+        if (match) {
+          process.env.APP = match[1].trim();
+          break;
+        }
+      }
+    }
+  }
+
+  // Build search paths for dotenv based on detected APP or legacy locations
+  const appFolder = process.env.APP || 'app';
   const searchPaths = [
     path.join(process.cwd(), '.env'),
-    path.join(process.cwd(), 'app', '.env'),
-    path.join(process.cwd(), 'app.env'),
-    path.join(process.cwd(), 'app', 'app.env'),
+    path.join(process.cwd(), `${appFolder}`, '.env'),
+    path.join(process.cwd(), `${appFolder}.env`),
+    path.join(process.cwd(), `${appFolder}`, `${appFolder}.env`),
     path.join(appRoot, '.env'),
-    path.join(appRoot, 'app.env')
+    path.join(appRoot, `${appFolder}.env`),
   ];
   for (const envPath of searchPaths) {
     if (fs.existsSync(envPath)) {
@@ -27,6 +49,11 @@ try {
 
 // Helper to load APP name from .env file
 function getAppName() {
+  // Prefer explicit env var first
+  if (process.env.APP) {
+    return process.env.APP;
+  }
+
   try {
     const envPath = path.join(appRoot, '.env');
     const appEnvPath = path.join(process.cwd(), 'app', '.env');
@@ -43,10 +70,15 @@ function getAppName() {
   } catch (e) {
     // Ignore error
   }
-  return 'risk-dekstop';
+
+  return 'risk-desktop';
 }
 
 const appName = getAppName();
+
+// If LOG_FILE is set to 'LOG_FILE' or 'false' (case-insensitive) we disable file logging
+const _logFileEnv = String(process.env.LOG_FILE || '').trim().toLowerCase();
+const disableFileLogging = _logFileEnv === 'log_file' || _logFileEnv === 'false';
 
 // Dynamic prefix format for Winston
 const prefixFormat = winston.format((info) => {
@@ -102,10 +134,13 @@ console.warn = function(...args) {
   originalWarn.apply(console, args);
 };
 
-// Ensure logs directory exists
-const logDirectory = resolveFromAppRoot(process.env.DIR_TEST_LOGS || 'test_logs');
-if (!fs.existsSync(logDirectory)) {
-  fs.mkdirSync(logDirectory, { recursive: true });
+// Prepare logs directory only when file logging is enabled
+let logDirectory;
+if (!disableFileLogging) {
+  logDirectory = resolveFromAppRoot(process.env.DIR_TEST_LOGS || 'test_logs');
+  if (!fs.existsSync(logDirectory)) {
+    fs.mkdirSync(logDirectory, { recursive: true });
+  }
 }
 
 // Define log levels
@@ -151,21 +186,30 @@ const fileFormat = winston.format.combine(
 );
 
 // Create the logger instance
-const logger = winston.createLogger({
-  level: process.env.LOG_LEVEL || 'trace',
-  levels,
-  transports: [
-    new winston.transports.Console({ format }),
+const transports = [
+  new winston.transports.Console({ format }),
+];
+
+if (!disableFileLogging) {
+  transports.push(
     new winston.transports.File({
       filename: path.join(logDirectory, 'error.log'),
       level: 'error',
       format: fileFormat,
-    }),
+    })
+  );
+  transports.push(
     new winston.transports.File({
       filename: path.join(logDirectory, 'execution.log'),
       format: fileFormat,
-    }),
-  ],
+    })
+  );
+}
+
+const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'trace',
+  levels,
+  transports,
 });
 
 export default logger;

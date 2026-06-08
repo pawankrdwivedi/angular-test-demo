@@ -6,19 +6,21 @@ import { fileURLToPath } from 'url';
 import xlsx from 'xlsx';
 
 const currentDir = process.cwd();
-if (path.basename(currentDir) !== 'app' || !fs.existsSync(path.join(currentDir, 'package.json'))) {
-  console.error('\n❌ Error: Test execution is only allowed from inside the "app" folder.');
-  console.error('Please change your directory to the "app" folder and run the command again.\n');
+const appFolderName = process.env.APP || 'risk-desktop';
+if (path.basename(currentDir) !== appFolderName || !fs.existsSync(path.join(currentDir, 'package.json'))) {
+  console.error(`\n❌ Error: Test execution is only allowed from inside the "${appFolderName}" folder.`);
+  console.error(`Please change your directory to the "${appFolderName}" folder and run the command again.\n`);
   process.exit(1);
 }
 
-// Load environment variables first
+// Load environment variables (allow running from folder named by APP env var)
 try {
+  const appFolder = process.env.APP || 'risk-desktop';
   const searchPaths = [
     path.join(process.cwd(), '.env'),
-    path.join(process.cwd(), 'app', '.env'),
-    path.join(process.cwd(), 'app.env'),
-    path.join(process.cwd(), 'app', 'app.env')
+    path.join(process.cwd(), appFolder, '.env'),
+    path.join(process.cwd(), `${appFolder}.env`),
+    path.join(process.cwd(), appFolder, `${appFolder}.env`)
   ];
   for (const envPath of searchPaths) {
     if (fs.existsSync(envPath)) {

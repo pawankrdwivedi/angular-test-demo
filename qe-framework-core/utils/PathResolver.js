@@ -8,13 +8,22 @@ function hasPackageJson(dir) {
 function getAppRoot() {
   const cwd = process.cwd();
 
-  if (path.basename(cwd) === 'app' && hasPackageJson(cwd)) {
+  // Respect APP env var (if set) to name the application folder (e.g. 'risk-desktop')
+  const appFolderName = process.env.APP || 'app';
+
+  if (path.basename(cwd) === appFolderName && hasPackageJson(cwd)) {
     return cwd;
   }
 
-  const nestedApp = path.join(cwd, 'app');
+  const nestedApp = path.join(cwd, appFolderName);
   if (hasPackageJson(nestedApp)) {
     return nestedApp;
+  }
+
+  // Fallback to legacy 'app' folder if present
+  const legacyApp = path.join(cwd, 'app');
+  if (hasPackageJson(legacyApp)) {
+    return legacyApp;
   }
 
   return cwd;
