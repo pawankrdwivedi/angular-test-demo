@@ -1,7 +1,0 @@
-/node_modules
-/test_logs
-/test_results
-node_modules/
-test_logs/
-test_results/
-package-lock.json
