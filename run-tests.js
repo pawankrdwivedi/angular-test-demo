@@ -45,8 +45,8 @@ const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-let env = 'sit-01'; // default environment
-let application = 'sample-application'; // default application
+let env = process.env.ENV || 'sit-01'; // default environment
+let application = process.env.APP || undefined; // no default application
 const cleanArgs = [];
 
 let onlyCucumber = false;
@@ -74,10 +74,11 @@ for (let i = 0; i < args.length; i++) {
 }
 
 // Set environment variable for ConfigManager
-process.env.TEST_ENV = env;
-process.env.APPLICATION = application;
-console.log(`[Runner] Targeting Environment: ${env.toUpperCase()}`);
-console.log(`[Runner] Targeting Application: ${application.toUpperCase()}`);
+// Set environment variable for ConfigManager
+if (env) process.env.TEST_ENV = env;
+if (application) process.env.APPLICATION = application;
+console.log(`[Runner] Targeting Environment: ${env ? env.toUpperCase() : 'NONE'}`);
+console.log(`[Runner] Targeting Application: ${application ? application.toUpperCase() : 'NONE'}`);
 
 // Clean previous Allure results to avoid combined reports from previous executions
 const resultsDir = process.env.DIR_TEST_RESULTS || 'test_results';
