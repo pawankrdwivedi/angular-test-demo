@@ -3,10 +3,6 @@ import { configManager, logger, ApiClient, etlValidator, dbClient, SoftAssert, e
 import path from 'path';
 import fs from 'fs';
 
-const currentDir = process.cwd();
-if (path.basename(currentDir) !== 'app' || !fs.existsSync(path.join(currentDir, 'package.json'))) {
-  throw new Error('Test execution is only allowed from inside the "app" folder.');
-}
 
 class CustomWorld extends World {
   constructor(options) {

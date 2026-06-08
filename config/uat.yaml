@@ -1,9 +1,0 @@
-
-uiUrl: https://angular.io
-apiUrl: https://jsonplaceholder.typicode.com
-dbHost: localhost
-dbPort: 5432
-dbUser: test
-dbPassword: test123
-dbName: automation_qa
-dbType: postgres

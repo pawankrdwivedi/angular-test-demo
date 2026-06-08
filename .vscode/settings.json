@@ -1,15 +1,15 @@
 {
   "cucumber.features": [
-    "risk-desktop/features/feature/**/*.feature"
+    "risk-desktop/features/**/*.feature"
   ],
   "cucumber.glue": [
-    "risk-desktop/features/step_definition/**/*.js",
-    "risk-desktop/features/support/**/*.js"
+    "risk-desktop/step_definition/**/*.js",
+    "risk-desktop/support/**/*.js"
   ],
   "cucumberautocomplete.steps": [
-    "risk-desktop/features/step_definition/**/*.js",
-    "risk-desktop/features/support/**/*.js"
+    "risk-desktop/step_definition/**/*.js",
+    "risk-desktop/support/**/*.js"
   ],
-  "cucumberautocomplete.syncfeatures": "risk-desktop/features/feature/**/*.feature",
+  "cucumberautocomplete.syncfeatures": "risk-desktop/features/**/*.feature",
   "cucumberautocomplete.strictGherkinCompletion": true
 }

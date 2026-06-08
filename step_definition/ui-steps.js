@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@cucumber/cucumber';
-import CommonPage from '../../page_objects/CommonPage.js';
+import CommonPage from '../page_objects/CommonPage.js';
 
 Given('user loads UI test data {string}', function (testCaseId, dataTable) {
   const callback = typeof dataTable === 'function' ? dataTable : null;

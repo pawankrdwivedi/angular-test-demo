@@ -113,11 +113,17 @@ dirs.forEach(dir => {
   }
 });
 
+// Directory variables
+const featuresDir = process.env.DIR_FEATURES || 'features';
+const stepDefinitionsDir = process.env.DIR_STEP_DEFINITIONS || 'step_definition';
+const supportDir = process.env.DIR_SUPPORT || 'support';
+const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
+const normalizedFeaturesDir = normalizePath(featuresDir);
+
 // Detect which runners to invoke based on cleanArgs
 const hasCucumberArgs = cleanArgs.some(arg =>
   arg.endsWith('.feature') ||
-  arg.includes('features/') ||
-  arg.includes('features\\') ||
+  normalizePath(arg).includes(`${normalizedFeaturesDir}/`) ||
   arg.startsWith('@') ||
   arg === '--tags' ||
   arg === '-t'
@@ -174,8 +180,7 @@ for (let i = 0; i < cleanArgs.length; i++) {
 
 const playwrightArgs = cleanArgs.filter(arg =>
   !arg.endsWith('.feature') &&
-  !arg.includes('features/') &&
-  !arg.includes('features\\') &&
+  !normalizePath(arg).includes(`${normalizedFeaturesDir}/`) &&
   !arg.startsWith('@') &&
   arg !== '--tags' &&
   arg !== '-t'
@@ -197,11 +202,6 @@ function findCucumberBin() {
 const cucumberBin = findCucumberBin();
 
 const defaultArgs = [];
-const featuresDir = process.env.DIR_FEATURES || 'features';
-const stepDefinitionsDir = process.env.DIR_STEP_DEFINITIONS || 'step_definition';
-const supportDir = process.env.DIR_SUPPORT || 'support';
-const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
-const normalizedFeaturesDir = normalizePath(featuresDir);
 const defaultFeatureGlob = `${normalizedFeaturesDir}/**/*.feature`;
 const generatedFeaturesDir = path.join(resultsDir, 'generated-features');
 
@@ -320,16 +320,9 @@ if (!cucumberArgs.some(arg => arg.endsWith('.feature') || normalizePath(arg).sta
 const finalArgs = [...defaultArgs, ...cucumberArgs];
 
 if (!finalArgs.includes('--import')) {
-  const stepDefsPath = stepDefinitionsDir.startsWith('features') || stepDefinitionsDir.startsWith('feature')
-    ? stepDefinitionsDir
-    : `features/${stepDefinitionsDir}`;
-  const supportPath = supportDir.startsWith('features') || supportDir.startsWith('feature')
-    ? supportDir
-    : `features/${supportDir}`;
-
   finalArgs.push(
-    '--import', `${stepDefsPath}/**/*.js`,
-    '--import', `${supportPath}/**/*.js`
+    '--import', `${stepDefinitionsDir}/**/*.js`,
+    '--import', `${supportDir}/**/*.js`
   );
 }
 if (!finalArgs.includes('--format')) {

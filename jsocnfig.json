@@ -2,8 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@framework/*": ["qe-framework-core/*"],
-      "@app/*":["app/*"]
+      "@framework/*": ["qe-framework-core/*"]
     }
   }
 }
