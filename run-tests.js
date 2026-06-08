@@ -6,21 +6,30 @@ import { fileURLToPath } from 'url';
 import xlsx from 'xlsx';
 
 const currentDir = process.cwd();
-const appFolderName = process.env.APP || 'risk-desktop';
+
+// Load basic .env first so we can check if APP is defined
+try {
+  const localEnvPath = path.join(currentDir, '.env');
+  if (fs.existsSync(localEnvPath)) {
+    dotenv.config({ path: localEnvPath });
+  }
+} catch (e) {
+  // Ignore
+}
+
+const appFolderName = process.env.APP || path.basename(currentDir);
 if (path.basename(currentDir) !== appFolderName || !fs.existsSync(path.join(currentDir, 'package.json'))) {
   console.error(`\n❌ Error: Test execution is only allowed from inside the "${appFolderName}" folder.`);
   console.error(`Please change your directory to the "${appFolderName}" folder and run the command again.\n`);
   process.exit(1);
 }
 
-// Load environment variables (allow running from folder named by APP env var)
+// Load other environment variables related to the app
 try {
-  const appFolder = process.env.APP || 'risk-desktop';
   const searchPaths = [
-    path.join(process.cwd(), '.env'),
-    path.join(process.cwd(), appFolder, '.env'),
-    path.join(process.cwd(), `${appFolder}.env`),
-    path.join(process.cwd(), appFolder, `${appFolder}.env`)
+    path.join(process.cwd(), appFolderName, '.env'),
+    path.join(process.cwd(), `${appFolderName}.env`),
+    path.join(process.cwd(), appFolderName, `${appFolderName}.env`)
   ];
   for (const envPath of searchPaths) {
     if (fs.existsSync(envPath)) {
