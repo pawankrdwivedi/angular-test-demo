@@ -37,7 +37,7 @@
     "oracledb": "^6.5.0",
     "pg": "^8.12.0",
     "playwright": "^1.44.1",
-    "qe-framework-core": "file:qe-framework-core-1.0.1.tgz",
+    "qe-framework-core": "file:qe-framework-core-1.0.5.tgz",
     "tedious": "^18.2.0",
     "winston": "^3.13.0",
     "xlsx": "^0.18.5"
