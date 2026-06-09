@@ -54,11 +54,11 @@ const browserMap = {
 const targetBrowser = (execConfig.browser || 'chromium').toLowerCase();
 const activeProject = browserMap[targetBrowser] || browserMap.chromium;
 
-const resultsDir = path.join(baseAppPath, process.env.DIR_TEST_RESULTS || 'test_results');
+const resultsDir = path.join(baseAppPath, 'test_results');
 
 export default defineConfig({
   // Directory where Playwright searches for tests
-  testDir: process.env.DIR_TEST || path.join(baseAppPath, 'test'),
+  testDir: path.join(baseAppPath, 'src/test'),
 
   // Folder for test artifacts (screenshots, traces, videos, etc.)
   outputDir: path.join(resultsDir, 'playwright-artifacts'),
@@ -73,7 +73,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
 
   // Retry on CI only
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.RETRY ? parseInt(process.env.RETRY, 10) : 0,
 
   // Opt out of parallel tests on CI.
   workers: execConfig.parallel,

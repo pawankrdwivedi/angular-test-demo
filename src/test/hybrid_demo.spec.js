@@ -36,7 +36,7 @@ test.describe('Hybrid POM & Data-Driven Tests', () => {
       // 1. Load Excel Test Data dynamically based on current environment
       const env = configManager.getEnvironment();
       const basePath = fs.existsSync(path.join(process.cwd(), 'app')) ? 'app' : '';
-      const testDataDir = process.env.DIR_TEST_DATA || 'test_data';
+      const testDataDir = 'src/test_data';
       const excelFileName = process.env.FILE_TEST_DATA_EXCEL || 'test-data.xlsx';
       const excelFilePath = path.join(process.cwd(), basePath, testDataDir, excelFileName);
 

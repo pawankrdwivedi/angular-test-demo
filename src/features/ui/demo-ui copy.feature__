@@ -1,0 +1,52 @@
+Feature: Angular Documentation UI Search
+
+  @ui
+  Scenario Outline: 1. Search documentation on Angular website
+    Given user loads UI test data "<TestCaseID>"
+    When user navigates to Angular documentation page
+    And user searches for query from test data
+    Then search result dialog should be visible
+
+    Examples:
+      | TestCaseID |
+      | TC001      |
+      | TC002      |
+
+  @ui
+  Scenario Outline: 2. Verify test data from Examples table columns
+    Given user loads UI test data "<TestCaseID>"
+    When user navigates to Angular documentation page
+    And user searches for query from test data
+    Then search result dialog should be visible
+
+    Examples:
+      | TestCaseID | searchQuery | expectedTitle |
+      | TC_FEAT_01 | Zone        | Angular       |
+
+  @ui
+  Scenario: 3. Verify test data from Step DataTable
+    Given user loads UI test data "TC_FEAT_02"
+      | searchQuery | expectedTitle |
+      | Router      | Angular       |
+    When user navigates to Angular documentation page
+    And user searches for query from test data
+    Then search result dialog should be visible
+
+  @ui
+  Scenario: 4. Verify execution when no data exists anywhere
+    Given user loads UI test data "TC_NON_EXISTENT_ID"
+    When user navigates to Angular documentation page
+    And user searches for query from test data
+    Then search result dialog should be visible
+
+   @ui
+  Scenario Outline: 5. Execute generated Cucumber test case
+    Given user loads test data for generic-cucumber-demo "<TestCaseID>"
+    When user navigates to Angular documentation page for generic-cucumber-demo
+    And user searches for query from test data for generic-cucumber-demo
+    Then search result dialog for generic-cucumber-demo should be visible
+
+    Examples:
+      | TestCaseID |
+      | TC001      |
+      | TC002      |  

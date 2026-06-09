@@ -1,7 +1,7 @@
 import { Before, After, BeforeAll, AfterAll, Status, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
 import path from 'path';
-import { browserManager, agenticAiManager, dbClient, logger, configManager, allureReporter, SoftAssert } from 'qe-framework-core';
+import { browserManager, dbClient, logger, configManager, allureReporter, SoftAssert } from 'qe-framework-core';
 
 const appRoot = path.basename(process.cwd()) === 'app' ? process.cwd() : path.join(process.cwd(), 'app');
 
@@ -12,10 +12,7 @@ setDefaultTimeout(timeoutMs);
 BeforeAll(async function () {
   logger.info('Starting Global Test Execution Setup');
   
-  // Log AI configuration status
-  const aiConfig = configManager.getAiConfig();
-  logger.info(`AI Configuration: Enabled=${aiConfig?.enabled || false}, Execution=${aiConfig?.execution || false}, Generation=${aiConfig?.generation || false}`);
-  
+
   // Initialize Allure reporting with environment properties
   logger.info('Initializing Allure Reporter');
   allureReporter.initializeReporting();
@@ -100,23 +97,8 @@ After(async function (scenario) {
     }
   }
 
-  // AI failure analysis if failed
   if (scenarioFailed) {
     logger.error(`Scenario FAILED: "${this.scenarioName}"`);
-    if (scenario.result?.error) {
-      try {
-        const analysis = await agenticAiManager.analyzeFailure(
-          this.scenarioName,
-          scenario.result.error,
-          this.page
-        );
-        
-        // Attach AI analysis to Allure report
-        allureReporter.attachJson(this, analysis, 'Agentic AI Failure Analysis');
-      } catch (aiErr) {
-        logger.error(`AI Failure Analyzer error: ${aiErr.message}`);
-      }
-    }
   } else {
     logger.info(`Scenario PASSED: "${this.scenarioName}"`);
   }
@@ -138,7 +120,7 @@ After(async function (scenario) {
   if (shouldAttachScreenshot) {
     const screenshotPath = path.join(
       appRoot,
-      process.env.DIR_TEST_RESULTS || 'test_results',
+      'test_results',
       'reports',
       'screenshots',
       `${sanitizedScenarioName}_failed.png`
@@ -179,7 +161,7 @@ After(async function (scenario) {
   if (shouldAttachTrace) {
     const tracePath = path.join(
       appRoot,
-      process.env.DIR_TEST_RESULTS || 'test_results',
+      'test_results',
       'reports',
       'traces',
       `${sanitizedScenarioName}_trace.zip`

@@ -1,7 +1,7 @@
 {
   "excel": [
     {
-      "fileName": "app/test_data/test-data.xlsx",
+      "fileName": "src/test_data/test-data.xlsx",
       "sheets": {
         "UI_TestData": [
           {
@@ -36,8 +36,8 @@
         "ETL_TestData": [
           {
             "TestCaseID": "TC001",
-            "sourceFile": "test_data/source_etl.csv",
-            "targetFile": "test_data/target_etl.csv",
+            "sourceFile": "src/test_data/source_etl.csv",
+            "targetFile": "src/test_data/target_etl.csv",
             "primaryKey": "id",
             "aggregateField": "balance",
             "aggregateType": "SUM",
@@ -49,11 +49,11 @@
   ],
   "csv": [
     {
-      "fileName": "test_data/source_etl.csv",
+      "fileName": "src/test_data/source_etl.csv",
       "content": "id,name,email,status,balance\n1,John Doe,john.doe@example.com,Active,5000.00\n2,Jane Smith,jane.smith@example.com,Inactive,1200.50"
     },
     {
-      "fileName": "test_data/target_etl.csv",
+      "fileName": "src/test_data/target_etl.csv",
       "content": "id,name,email,status,balance\n1,John Doe,john.doe@example.com,Active,5000.00\n2,Jane Smith,jane.smith@example.com,Inactive,1200.50"
     }
   ]

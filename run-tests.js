@@ -81,8 +81,8 @@ console.log(`[Runner] Targeting Environment: ${env ? env.toUpperCase() : 'NONE'}
 console.log(`[Runner] Targeting Application: ${application ? application.toUpperCase() : 'NONE'}`);
 
 // Clean previous Allure results to avoid combined reports from previous executions
-const resultsDir = process.env.DIR_TEST_RESULTS || 'test_results';
-const logsDir = process.env.DIR_TEST_LOGS || 'test_logs';
+const resultsDir = 'test_results';
+const logsDir = 'test_logs';
 
 const allureResultsPath = path.join(process.cwd(), resultsDir, 'allure-results');
 if (fs.existsSync(allureResultsPath)) {
@@ -129,9 +129,9 @@ dirs.forEach(dir => {
 });
 
 // Directory variables
-const featuresDir = process.env.DIR_FEATURES || 'features';
-const stepDefinitionsDir = process.env.DIR_STEP_DEFINITIONS || 'step_definition';
-const supportDir = process.env.DIR_SUPPORT || 'support';
+const featuresDir = 'src/features';
+const stepDefinitionsDir = 'src/step_definition';
+const supportDir = 'src/support';
 const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
 const normalizedFeaturesDir = normalizePath(featuresDir);
 
@@ -296,8 +296,8 @@ function collectFeatureFiles(rootDir) {
 }
 
 function prepareGeneratedFeatures() {
-  const testDataDir = process.env.DIR_TEST_DATA || 'test_data';
-  const excelFileName = process.env.FILE_TEST_DATA_EXCEL || 'test-data.xlsx';
+  const testDataDir = 'src/test_data';
+  const excelFileName = 'test-data.xlsx';
   const excelPath = path.join(process.cwd(), testDataDir, excelFileName);
   const sourceFeaturesPath = path.join(process.cwd(), featuresDir);
 
@@ -344,6 +344,11 @@ if (!finalArgs.includes('--format')) {
   finalArgs.push(
     '--format', `html:${resultsDir}/reports/cucumber-report.html`
   );
+}
+
+const retryCount = process.env.RETRY ? parseInt(process.env.RETRY, 10) : 0;
+if (retryCount > 0 && !finalArgs.includes('--retry')) {
+  finalArgs.push('--retry', retryCount.toString());
 }
 
 function runCucumberTests() {

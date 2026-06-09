@@ -1,5 +1,6 @@
 
 uiUrl: https://angular.io
+apiUrl:
 dbHost: localhost
 dbPort: 5432
 dbUser: test

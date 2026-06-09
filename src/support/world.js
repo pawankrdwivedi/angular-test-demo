@@ -100,8 +100,8 @@ class CustomWorld extends World {
     // 4. Fall back to Excel lookup if no feature file data exists and testCaseId is provided
     if (testCaseId) {
       const basePath = fs.existsSync(path.join(process.cwd(), 'app')) ? 'app' : '';
-      const testDataDir = process.env.DIR_TEST_DATA || 'test_data';
-      const excelFileName = process.env.FILE_TEST_DATA_EXCEL || 'test-data.xlsx';
+      const testDataDir = 'src/test_data';
+      const excelFileName = 'test-data.xlsx';
       const filePath = path.join(process.cwd(), basePath, testDataDir, excelFileName);
       this.logger.info(`Loading test data from Sheet: "${sheetName}" for TestCaseID: "${testCaseId}"`);
 

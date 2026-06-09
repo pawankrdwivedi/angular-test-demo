@@ -16,8 +16,6 @@
     "test:playwright:folder": "node run-tests.js --playwright",
     "test:playwright:ui": "npx playwright test --ui",
     "test:all": "npm run test:cucumber && npm run test:playwright",
-    "generate:testcase": "node qe-framework-core/cli/TestCaseGenerator.js",
-    "inspect:selectors": "node qe-framework-core/cli/SelectorInspector.js",
     "allure:generate": "node generate-allure.js",
     "allure:open": "allure open test_results/reports/allure-report",
     "allure": "npm run allure:generate && npm run allure:open",
@@ -37,7 +35,7 @@
     "oracledb": "^6.5.0",
     "pg": "^8.12.0",
     "playwright": "^1.44.1",
-    "qe-framework-core": "file:qe-framework-core-1.0.5.tgz",
+    "qe-framework-core": "file:qe-framework-core-1.0.8.tgz",
     "tedious": "^18.2.0",
     "winston": "^3.13.0",
     "xlsx": "^0.18.5"

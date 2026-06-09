@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 
-const resultsDir = process.env.DIR_TEST_RESULTS || 'test_results';
+const resultsDir = 'test_results';
 const historySource = path.join(process.cwd(), resultsDir, 'reports/allure-report/history');
 const historyDest = path.join(process.cwd(), resultsDir, 'allure-results/history');
 

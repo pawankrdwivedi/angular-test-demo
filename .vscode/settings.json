@@ -1,15 +1,15 @@
 {
   "cucumber.features": [
-    "angular-test-demo/features/**/*.feature"
+    "angular-test-demo/src/features/**/*.feature"
   ],
   "cucumber.glue": [
-    "angular-test-demo/step_definition/**/*.js",
-    "angular-test-demo/support/**/*.js"
+    "angular-test-demo/src/step_definition/**/*.js",
+    "angular-test-demo/src/support/**/*.js"
   ],
   "cucumberautocomplete.steps": [
-    "angular-test-demo/step_definition/**/*.js",
-    "angular-test-demo/support/**/*.js"
+    "angular-test-demo/src/step_definition/**/*.js",
+    "angular-test-demo/src/support/**/*.js"
   ],
-  "cucumberautocomplete.syncfeatures": "angular-test-demo/features/**/*.feature",
+  "cucumberautocomplete.syncfeatures": "angular-test-demo/src/features/**/*.feature",
   "cucumberautocomplete.strictGherkinCompletion": true
 }
