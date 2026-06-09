@@ -94,9 +94,11 @@ if (fs.existsSync(allureResultsPath)) {
   }
 }
 
+const isLoggerEnabled = String(process.env.LOGGER || '').trim().toLowerCase() === 'true';
+
 // Clean previous logs
 const logsPath = path.join(process.cwd(), logsDir);
-if (fs.existsSync(logsPath)) {
+if (isLoggerEnabled && fs.existsSync(logsPath)) {
   try {
     const files = fs.readdirSync(logsPath);
     for (const file of files) {
@@ -113,9 +115,12 @@ const dirs = [
   path.join(resultsDir, 'reports/screenshots'),
   path.join(resultsDir, 'reports/videos'),
   path.join(resultsDir, 'reports/traces'),
-  path.join(resultsDir, 'allure-results'),
-  logsDir
+  path.join(resultsDir, 'allure-results')
 ];
+
+if (isLoggerEnabled) {
+  dirs.push(logsDir);
+}
 dirs.forEach(dir => {
   const fullPath = path.join(process.cwd(), dir);
   if (!fs.existsSync(fullPath)) {

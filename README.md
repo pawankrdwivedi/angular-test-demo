@@ -350,7 +350,7 @@ This automatically captures and categorizes all API responses into scenario-spec
 When testing in environments where the backend is unstable or offline, execute tests with `MOCK_PLAYBACK` set to `true`:
 - **Windows PowerShell:**
   ```powershell
-  $env:MOCK_PLAYBACK="true"; npm run test
+  $env:MOCK_RECORD="false"; $env:MOCK_PLAYBACK="true"; npm run test "@ui"
   ```
 - **Windows Command Prompt (CMD):**
   ```cmd
