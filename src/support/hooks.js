@@ -4,9 +4,10 @@ import path from 'path';
 import { browserManager, dbClient, logger, configManager, allureReporter, SoftAssert } from 'qe-framework-core';
 
 const appRoot = path.basename(process.cwd()) === 'app' ? process.cwd() : path.join(process.cwd(), 'app');
-
+logger.info(`appRoot: ${appRoot}`);
 // Set global step/hook timeout from configuration (.env / YAML override)
 const timeoutMs = configManager.getExecutionConfig().timeout;
+logger.info(`timeoutMs: ${JSON.stringify(configManager.getExecutionConfig())}`);
 setDefaultTimeout(timeoutMs);
 
 BeforeAll(async function () {

@@ -2,3 +2,4 @@
 /test_logs
 /test_results
 package-lock.json
+*.tgz
