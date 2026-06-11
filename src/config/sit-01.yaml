@@ -1,9 +1,11 @@
-
-uiUrl: https://angular.io
-apiUrl:
-dbHost: localhost
-dbPort: 5432
-dbUser: test
-dbPassword: test123
-dbName: automation_qa
-dbType: postgres
+ui:
+  baseUrl: https://angular.io
+api:
+  baseUrl: https://angular.io/api
+database:
+  host: localhost
+  port: 5432
+  username: test
+  password: [PASSWORD]
+  name: automation_qa
+  type: postgres  

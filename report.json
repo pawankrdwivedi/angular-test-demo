@@ -1,0 +1,113 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "angular-documentation-ui-search;execute-generated-cucumber-test-case",
+        "keyword": "Scenario",
+        "line": 4,
+        "name": "Execute generated Cucumber test case",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1111599
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "failed",
+              "duration": 21950800,
+              "error_message": "browserType.launch: headless: expected boolean, got string\n    at G.launch (C:\\Github\\angular-test-demo\\node_modules\\qe-framework-core\\dist\\index.js:3:5232)\n    at G.createContext (C:\\Github\\angular-test-demo\\node_modules\\qe-framework-core\\dist\\index.js:5:1374)\n    at CustomWorld.<anonymous> (C:\\Github\\angular-test-demo\\src\\support\\hooks.js:56:52)"
+            },
+            "embeddings": [
+              {
+                "data": "U2NlbmFyaW8gTmFtZTogRXhlY3V0ZSBnZW5lcmF0ZWQgQ3VjdW1iZXIgdGVzdCBjYXNlCkVudmlyb25tZW50OiBTSVQtMDEKQXBwbGljYXRpb246IGFuZ3VsYXItdGVzdC1kZW1vCkJyb3dzZXI6IENocm9tZQpUYWdzOiBAdWk=",
+                "mime_type": "text/plain"
+              }
+            ]
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 5,
+            "name": "user navigates to Angular documentation page",
+            "match": {
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:12"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 6,
+            "name": "user searches for query from test data",
+            "match": {
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:17"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 7,
+            "name": "search result dialog should be visible",
+            "match": {
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:22"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 4438699
+            },
+            "embeddings": [
+              {
+                "data": "ewogICJUZXN0IE5hbWUiOiAiRXhlY3V0ZSBnZW5lcmF0ZWQgQ3VjdW1iZXIgdGVzdCBjYXNlIiwKICAiU3RhdHVzIjogIkZBSUxFRCIsCiAgIkR1cmF0aW9uIChtcykiOiAyMS45NTA4LAogICJTdGFydGVkIEF0IjogIjIwMjYtMDYtMTFUMDc6MDQ6NTEuMzM1WiIsCiAgIkNvbXBsZXRlZCBBdCI6ICIyMDI2LTA2LTExVDA3OjA0OjUxLjM2M1oiLAogICJFbnZpcm9ubWVudCI6ICJTSVQtMDEiLAogICJBcHBsaWNhdGlvbiI6ICJhbmd1bGFyLXRlc3QtZGVtbyIsCiAgIkJyb3dzZXIiOiAiQ2hyb21lIiwKICAiVXNlciI6ICJhZG1pbiIsCiAgIk1hY2hpbmUiOiAiREVTS1RPUC1UR0xGTFROIiwKICAidGVzdE5hbWUiOiAiRXhlY3V0ZSBnZW5lcmF0ZWQgQ3VjdW1iZXIgdGVzdCBjYXNlIiwKICAic3RhdHVzIjogIkZBSUxFRCIsCiAgImR1cmF0aW9uIjogMjEuOTUwOCwKICAic3RhcnRUaW1lIjogMTc4MTE2MTQ5MTMzNSwKICAiZW5kVGltZSI6IDE3ODExNjE0OTEzNjMsCiAgInRhZ3MiOiBbCiAgICAiQHVpIgogIF0sCiAgImVycm9yTWVzc2FnZSI6ICJOb25lIgp9",
+                "mime_type": "application/json"
+              }
+            ]
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1242000
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@ui",
+            "line": 3
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "angular-documentation-ui-search",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Angular Documentation UI Search",
+    "tags": [],
+    "uri": "test_results\\generated-features\\ui\\demo-ui.feature"
+  }
+]
