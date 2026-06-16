@@ -7,7 +7,9 @@ import fs from 'fs';
 const currentDir = process.cwd();
 const isRoot = fs.existsSync(path.join(currentDir, 'app', 'package.json'));
 
-if (!isRoot && path.basename(currentDir) !== 'app') {
+const appName = process.env.APP || '';
+
+if (!isRoot && path.basename(currentDir) !== 'app' && path.basename(currentDir) !== appName) {
   throw new Error('Playwright execution is only allowed from inside the "app" folder or project root.');
 }
 

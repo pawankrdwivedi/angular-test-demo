@@ -1,7 +1,7 @@
 import { Before, After, BeforeAll, AfterAll, Status, setDefaultTimeout } from '@cucumber/cucumber';
 import fs from 'fs';
 import path from 'path';
-import { browserManager, dbClient, logger, configManager, allureReporter, SoftAssert } from 'qe-framework-core';
+import { browserManager, dbClient, logger, configManager, allureReporter, SoftAssert, componentTestHelper } from 'qe-framework-core';
 
 const appRoot = path.basename(process.cwd()) === 'app' ? process.cwd() : path.join(process.cwd(), 'app');
 logger.info(`appRoot: ${appRoot}`);
@@ -58,6 +58,15 @@ Before(async function (scenario) {
     this.context = context;
     this.page = page;
 
+    // Automatically initialize network record/playback if enabled in env or config
+    const execConfig = configManager.getExecutionConfig() || {};
+    const mockRecord = String(process.env.MOCK_RECORD || execConfig.mockRecord || execConfig.MOCK_RECORD || 'false') === 'true';
+    const mockPlayback = String(process.env.MOCK_PLAYBACK || execConfig.mockPlayback || execConfig.MOCK_PLAYBACK || 'false') === 'true';
+
+    if (mockRecord || mockPlayback) {
+      await componentTestHelper.initializeMockMode(page, this.scenarioName);
+    }
+
     // Setup console log listener for Allure attachments
     page.on('console', msg => {
       this.consoleLogs.push({
@@ -107,6 +116,7 @@ After(async function (scenario) {
   // Close context to ensure screenshots, videos, and traces are saved and flushed
   if (this.context) {
     try {
+      await componentTestHelper.stopMockMode();
       await browserManager.closeContext(scenarioFailed, this.scenarioName);
     } catch (err) {
       logger.error(`Failed to close browser context: ${err.message}`);
