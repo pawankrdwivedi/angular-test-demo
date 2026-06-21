@@ -73,8 +73,7 @@ for (let i = 0; i < args.length; i++) {
   }
 }
 
-// Set environment variable for ConfigManager
-// Set environment variable for ConfigManager
+// Map command-line parsed overrides to standard environment variables for ConfigManager
 if (env) process.env.TEST_ENV = env;
 if (application) process.env.APPLICATION = application;
 console.log(`[Runner] Targeting Environment: ${env ? env.toUpperCase() : 'NONE'}`);

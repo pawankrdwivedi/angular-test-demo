@@ -127,6 +127,35 @@ Create or modify configuration settings in the `.env` at the project root or env
     type: postgres  
   ```
 
+### 4. Local Development & Framework Packaging
+For local framework development and testing, you can package the core library and reference it directly in the test suite:
+
+1. **Generate the Package**:
+   Navigate to the core framework directory and package it:
+   ```bash
+   cd ../qe-framework-core
+   npm install
+   npm run pack
+   ```
+   This compiles, minifies, and packs the framework into a tarball (e.g., `qe-framework-core-1.0.10.tgz`).
+
+2. **Link the Package**:
+   Copy the generated tarball to the `angular-test-demo` directory, and install/link it:
+   ```bash
+   cd ../angular-test-demo
+   npm install ./qe-framework-core-1.0.10.tgz
+   ```
+   This updates the dependency reference in `package.json` to point to the local file:
+   ```json
+   "dependencies": {
+     "qe-framework-core": "file:qe-framework-core-1.0.10.tgz"
+   }
+   ```
+   Now you can import core modules directly:
+   ```javascript
+   import { excelReader, configManager, ApiClient, dbClient, logger } from 'qe-framework-core';
+   ```
+
 ---
 
 ## ✍️ Creating & Writing Tests
