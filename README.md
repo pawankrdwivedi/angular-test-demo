@@ -39,11 +39,11 @@ It is structured to enforce a strict separation of concerns, featuring a generic
 ├── src/                        # Main source directory for application test assets
 │   ├── config/                 # Environment specific YAML configurations (sit-01, etc.)
 │   ├── features/               # Cucumber Gherkin BDD test assets
-│   ├── page_objects/           # Page Object Models extending BasePage
-│   ├── step_definition/        # BDD step definition files
+│   ├── pages/           # Page Object Models extending BasePage
+│   ├── step-definitions/        # BDD step definition files
 │   ├── support/                # Cucumber environment hooks and World setup
 │   ├── test/                   # Playwright Spec hybrid POM tests
-│   └── test_data/              # Dynamic Excel spreadsheets & ETL source files
+│   └── test-data/              # Dynamic Excel spreadsheets & ETL source files
 ├── docs/                       # Project documentation & guides
 ├── test_logs/                  # Dynamic execution and self-healing anomaly logs
 ├── test_results/               # Automated test results (screenshots, traces, videos, and reports)
@@ -174,7 +174,7 @@ Write steps using unified assertions, logs, and context clients accessed directl
 
 ```javascript
 import { Given, When, Then } from '@cucumber/cucumber';
-import { AngularDemoPage } from '../page_objects/AngularDemoPage.js';
+import { AngularDemoPage } from '../pages/angular-demo-page.js';
 
 When('user navigates to Angular documentation page', async function () {
   this.angularPage = new AngularDemoPage(this.page);
@@ -182,7 +182,7 @@ When('user navigates to Angular documentation page', async function () {
 });
 
 When('user searches for query from test data', async function () {
-  const query = this.test_data?.searchQuery || 'Component';
+  const query = this.testData?.searchQuery || 'Component';
   await this.angularPage.triggerSearch(query);
 });
 
@@ -266,7 +266,7 @@ npm run test:playwright:tag -- "Execute hybrid"
 #### **Run Playwright POM tests by Spec File**
 Runs POM tests targeting a specific spec file:
 ```bash
-npm run test:playwright:spec -- src/test/hybrid_demo.spec.js
+npm run test:playwright:spec -- src/test/hybrid-demo.spec.js
 ```
 
 #### **Run Playwright POM tests by Folder**
@@ -333,7 +333,7 @@ To record all UI network request/response traffic during execution, set the `MOC
   ```bash
   MOCK_RECORD=true npm run test "@ui"
   ```
-This automatically captures and categorizes all API responses into scenario-specific records inside `src/test_data/network_mocks.json`.
+This automatically captures and categorizes all API responses into scenario-specific records inside `src/test-data/network-mocks.json`.
 
 ### 2. Enable Playback (Mock Mode)
 When testing in environments where the backend is unstable or offline, execute tests with `MOCK_PLAYBACK` set to `true`:

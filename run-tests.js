@@ -130,7 +130,7 @@ dirs.forEach(dir => {
 
 // Directory variables
 const featuresDir = 'src/features';
-const stepDefinitionsDir = 'src/step_definition';
+const stepDefinitionsDir = 'src/step-definitions';
 const supportDir = 'src/support';
 const normalizePath = value => value.replace(/\\/g, '/').replace(/\/+$/, '');
 const normalizedFeaturesDir = normalizePath(featuresDir);
@@ -296,7 +296,7 @@ function collectFeatureFiles(rootDir) {
 }
 
 function prepareGeneratedFeatures() {
-  const testDataDir = 'src/test_data';
+  const testDataDir = 'src/test-data';
   const excelFileName = 'test-data.xlsx';
   const excelPath = path.join(process.cwd(), testDataDir, excelFileName);
   const sourceFeaturesPath = path.join(process.cwd(), featuresDir);

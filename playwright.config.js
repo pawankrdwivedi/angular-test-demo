@@ -78,7 +78,7 @@ export default defineConfig({
   retries: process.env.RETRY ? parseInt(process.env.RETRY, 10) : 0,
 
   // Opt out of parallel tests on CI.
-  workers: execConfig.parallel,
+  workers: execConfig.parallel > 0 ? execConfig.parallel : undefined,
 
   // Reporter to use
   reporter: [

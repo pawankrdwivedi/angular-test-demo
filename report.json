@@ -38,7 +38,7 @@
             "line": 5,
             "name": "user navigates to Angular documentation page",
             "match": {
-              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:12"
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step-definitions\\ui-steps.js:12"
             },
             "result": {
               "status": "skipped",
@@ -51,7 +51,7 @@
             "line": 6,
             "name": "user searches for query from test data",
             "match": {
-              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:17"
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step-definitions\\ui-steps.js:17"
             },
             "result": {
               "status": "skipped",
@@ -64,7 +64,7 @@
             "line": 7,
             "name": "search result dialog should be visible",
             "match": {
-              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step_definition\\ui-steps.js:22"
+              "location": "file:\\C:\\Github\\angular-test-demo\\src\\step-definitions\\ui-steps.js:22"
             },
             "result": {
               "status": "skipped",

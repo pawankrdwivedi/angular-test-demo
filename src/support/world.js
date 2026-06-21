@@ -25,7 +25,7 @@ class CustomWorld extends World {
     this.page = null;
     
     // Placeholder for Excel/Scenario Test Data
-    this.test_data = {};
+    this.testData = {};
     
     // Scenario details
     this.scenarioName = '';
@@ -62,14 +62,14 @@ class CustomWorld extends World {
 
   /**
    * Helper to load external Excel test data based on TestCaseID.
-   * Maps Excel row fields dynamically onto this.test_data.
+   * Maps Excel row fields dynamically onto this.testData.
    */
-  loadExceltest_data(sheetName, testCaseId, dataTable = null) {
+  loadExcelTestData(sheetName, testCaseId, dataTable = null) {
     // 1. Extract and merge Examples data from feature file scenario outline (if any)
     const examplesData = this.extractExamplesData();
     if (examplesData) {
-      this.test_data = {
-        ...this.test_data,
+      this.testData = {
+        ...this.testData,
         ...examplesData,
       };
     }
@@ -78,8 +78,8 @@ class CustomWorld extends World {
     if (dataTable && typeof dataTable.hashes === 'function') {
       const hashes = dataTable.hashes();
       if (hashes && hashes.length > 0) {
-        this.test_data = {
-          ...this.test_data,
+        this.testData = {
+          ...this.testData,
           ...hashes[0],
         };
       }
@@ -87,20 +87,20 @@ class CustomWorld extends World {
 
     // 3. Determine if actual test data has been defined in the feature file.
     // We ignore the TestCaseID/testCaseId key when checking if actual data values are defined.
-    const hasFeatureFileData = Object.keys(this.test_data).some(
+    const hasFeatureFileData = Object.keys(this.testData).some(
       (key) => key.toLowerCase() !== 'testcaseid'
     );
 
     if (hasFeatureFileData) {
       this.logger.info('Test data is defined in the feature file. Skipping Excel data fetch.');
-      this.logger.debug(`Scenario test_data populated: ${JSON.stringify(this.test_data)}`);
+      this.logger.debug(`Scenario test-data populated: ${JSON.stringify(this.testData)}`);
       return;
     }
 
     // 4. Fall back to Excel lookup if no feature file data exists and testCaseId is provided
     if (testCaseId) {
       const basePath = fs.existsSync(path.join(process.cwd(), 'app')) ? 'app' : '';
-      const testDataDir = 'src/test_data';
+      const testDataDir = 'src/test-data';
       const excelFileName = 'test-data.xlsx';
       const filePath = path.join(process.cwd(), basePath, testDataDir, excelFileName);
       this.logger.info(`Loading test data from Sheet: "${sheetName}" for TestCaseID: "${testCaseId}"`);
@@ -110,11 +110,11 @@ class CustomWorld extends World {
         if (excelRow) {
           // Resolve environment specific overrides
           const resolvedRow = this.excel.resolveEnvData(excelRow, this.config.getEnvironment());
-          this.test_data = {
-            ...this.test_data,
+          this.testData = {
+            ...this.testData,
             ...resolvedRow,
           };
-          this.logger.debug(`Scenario test_data populated from Excel: ${JSON.stringify(this.test_data)}`);
+          this.logger.debug(`Scenario test-data populated from Excel: ${JSON.stringify(this.testData)}`);
           return;
         }
       } catch (err) {

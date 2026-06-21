@@ -59,7 +59,7 @@ AI_EXECUTION=true
 AI_GENERATION=true
 ```
 
-### 2. Updated ConfigManager (`framework/config/ConfigManager.js`)
+### 2. Updated ConfigManager (`framework/config/config-manager.js`)
 
 **Changes:**
 - Added `dotenv` import to load `.env` file
@@ -98,23 +98,23 @@ All YAML files have been updated to remove duplicate common values. Each file no
 - Kept: ai configuration (all false)
 - Removed: common values
 
-### 4. Updated Hooks (`app/step_definition/hooks.js`)
+### 4. Updated Hooks (`app/step-definitions/hooks.js`)
 
 **Change:** Updated to use timeout from configuration instead of hardcoded value
 
 ```javascript
-import configManager from '../../framework/config/ConfigManager.js';
+import configManager from '../../framework/config/config-manager.js';
 
 const timeoutMs = configManager.getExecutionConfig().timeout || 30000;
 setDefaultTimeout(timeoutMs);
 ```
 
-### 5. Updated AngularDemoPage (`framework/pages/AngularDemoPage.js`)
+### 5. Updated AngularDemoPage (`framework/pages/angular-demo-page.js`)
 
 **Change:** Now uses baseUrl from YAML configuration instead of hardcoded URL
 
 ```javascript
-import configManager from '../config/ConfigManager.js';
+import configManager from '../config/config-manager.js';
 
 class AngularDemoPage extends BasePage {
   constructor(page) {
@@ -283,7 +283,7 @@ PARALLEL=4
 
 The AI features are integrated in the following components:
 
-#### 1. **BrowserManager** (`framework/browser/BrowserManager.js`)
+#### 1. **BrowserManager** (`framework/browser/browser-manager.js`)
 - Checks `agenticAiManager.isExecutionEnabled` before attempting locator self-healing
 - Falls back to manual fallback selectors if AI is disabled
 - Logs when AI healing is skipped
@@ -294,7 +294,7 @@ The AI features are integrated in the following components:
 - `isExecutionEnabled`: Controls runtime AI capabilities (locator healing, failure analysis)
 - `isGenerationEnabled`: Controls test generation capabilities
 
-#### 3. **Hooks** (`app/step_definition/hooks.js`)
+#### 3. **Hooks** (`app/step-definitions/hooks.js`)
 - Logs AI configuration at test startup
 - Calls `agenticAiManager.analyzeFailure()` when scenarios fail (if execution enabled)
 - Respects AI disabled state during failure handling
@@ -425,7 +425,7 @@ grep "Failure Analysis" test_logs/*.log
 - [x] Updated `ConfigManager.js` to load and apply .env defaults
 - [x] Cleaned up all YAML files (qa.yaml, dev.yaml, prod.yaml, uat.yaml)
 - [x] Updated `hooks.js` to use timeout from config
-- [x] Updated `AngularDemoPage.js` to use baseUrl from config
+- [x] Updated `angular-demo-page.js` to use baseUrl from config
 - [x] Maintained backward compatibility with existing code
 - [x] Environment variable override functionality preserved
 

@@ -17,6 +17,7 @@
     "test:playwright:ui": "npx playwright test --ui",
     "test:all": "npm run test:cucumber && npm run test:playwright",
     "allure:generate": "node generate-allure.js",
+    "allure:pdf": "node generate-allure.js",
     "allure:open": "allure open test_results/reports/allure-report",
     "allure": "npm run allure:generate && npm run allure:open",
     "lint": "eslint . --ext .js",

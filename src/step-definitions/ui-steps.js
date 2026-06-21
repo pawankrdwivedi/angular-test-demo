@@ -1,5 +1,5 @@
 import { Given, When, Then } from '@cucumber/cucumber';
-import CommonPage from '../page_objects/CommonPage.js';
+import CommonPage from '../pages/common-page.js';
 
 
 
@@ -9,7 +9,7 @@ When('user navigates to Angular documentation page', async function () {
 });
 
 When('user searches for query from test data', async function () {
-  const query = this.test_data?.searchQuery || 'Component';
+  const query = this.testData?.searchQuery || 'Component';
   await this.angularPage.triggerSearch(query);
 });
 

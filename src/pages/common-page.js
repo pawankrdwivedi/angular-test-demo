@@ -1,4 +1,4 @@
-import AngularDemoPage from './AngularDemoPage.js';
+import AngularDemoPage from './angular-demo-page.js';
 
 class CommonPage extends AngularDemoPage {
   constructor(page) {

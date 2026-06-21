@@ -4,14 +4,14 @@ Given('user loads ETL test data {string}', function (testCaseId, dataTable) {
   const callback = typeof dataTable === 'function' ? dataTable : null;
   const realDataTable = dataTable && typeof dataTable.hashes === 'function' ? dataTable : null;
   // Load data from Excel sheet 'ETL_test_data'
-  this.loadExceltest_data('ETL_test_data', testCaseId, realDataTable);
+  this.loadExcelTestData('ETL_test_data', testCaseId, realDataTable);
   if (callback) callback();
 });
 
 When('user reconciles source CSV file with target CSV file', function () {
-  const sourcePath = this.test_data.sourceFile;
-  const targetPath = this.test_data.targetFile;
-  const pk = this.test_data.primaryKey || 'id';
+  const sourcePath = this.testData.sourceFile;
+  const targetPath = this.testData.targetFile;
+  const pk = this.testData.primaryKey || 'id';
 
   this.logger.info(`Reconciling files. Source: ${sourcePath}, Target: ${targetPath}, Key: ${pk}`);
   
@@ -51,10 +51,10 @@ Then('columns and values should reconcile perfectly', function () {
 });
 
 Then('aggregate field values should match expected calculation', function () {
-  const sourcePath = this.test_data.sourceFile;
-  const fieldName = this.test_data.aggregateField || 'balance';
-  const aggType = this.test_data.aggregateType || 'SUM';
-  const expectedValue = parseFloat(this.test_data.expectedAggregateValue || '0');
+  const sourcePath = this.testData.sourceFile;
+  const fieldName = this.testData.aggregateField || 'balance';
+  const aggType = this.testData.aggregateType || 'SUM';
+  const expectedValue = parseFloat(this.testData.expectedAggregateValue || '0');
 
   // Load source data rows
   const sourceData = this.etl.readCsv(sourcePath);

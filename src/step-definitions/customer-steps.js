@@ -4,13 +4,13 @@ Given('user loads test data {string}', function (testCaseId, dataTable) {
   const callback = typeof dataTable === 'function' ? dataTable : null;
   const realDataTable = dataTable && typeof dataTable.hashes === 'function' ? dataTable : null;
   // Load data from Excel sheet 'API_test_data'
-  this.loadExceltest_data('API_test_data', testCaseId, realDataTable);
+  this.loadExcelTestData('API_test_data', testCaseId, realDataTable);
   if (callback) callback();
 });
 
 When('user submits customer API', async function () {
-  const endpoint = this.test_data.endpoint || '/posts/1';
-  const method = this.test_data.method || 'GET';
+  const endpoint = this.testData.endpoint || '/posts/1';
+  const method = this.testData.method || 'GET';
   
   this.logger.info(`Submitting Customer API: ${method} ${endpoint}`);
   
@@ -36,7 +36,7 @@ Then('response status should be {int}', function (expectedStatus) {
 });
 
 Then('customer should exist in database', async function () {
-  const customerId = this.test_data.customer_id || 'TC001';
+  const customerId = this.testData.customer_id || 'TC001';
   this.logger.info(`Validating customer in database: ${customerId}`);
   
   // Database Query execution

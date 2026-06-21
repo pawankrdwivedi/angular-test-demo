@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import CommonPage from '../page_objects/CommonPage.js';
+import CommonPage from '../pages/common-page.js';
 import { excelReader, configManager, ApiClient, dbClient, logger, networkRecordPlaybackManager } from 'qe-framework-core';
 import path from 'path';
 import fs from 'fs';
@@ -36,7 +36,7 @@ test.describe('Hybrid POM & Data-Driven Tests', () => {
       // 1. Load Excel Test Data dynamically based on current environment
       const env = configManager.getEnvironment();
       const basePath = fs.existsSync(path.join(process.cwd(), 'app')) ? 'app' : '';
-      const testDataDir = 'src/test_data';
+      const testDataDir = 'src/test-data';
       const excelFileName = process.env.FILE_TEST_DATA_EXCEL || 'test-data.xlsx';
       const excelFilePath = path.join(process.cwd(), basePath, testDataDir, excelFileName);
 

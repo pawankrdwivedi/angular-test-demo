@@ -96,8 +96,8 @@ app/features/
 ### Scenario 3: Shared Test Data and Steps
 
 Some test data and step definitions might be shared across applications. You can:
-- Keep shared step definitions in `app/step_definition/`
-- Keep shared test data in `app/test_data/`
+- Keep shared step definitions in `app/step-definitions/`
+- Keep shared test data in `app/test-data/`
 - Use tags in feature files to mark app-specific scenarios
 
 ## How to Run Tests
@@ -201,7 +201,7 @@ npm test -- --app=default --env=dev
 In your step definitions, page objects, or other code:
 
 ```javascript
-import ConfigManager from './framework/config/ConfigManager.js';
+import ConfigManager from './framework/config/config-manager.js';
 
 const config = new ConfigManager();
 const application = config.getApplication();
@@ -272,4 +272,4 @@ ai:
 ## See Also
 - [README.md](README.md) - Main project documentation
 - [CONFIGURATION_MIGRATION.md](CONFIGURATION_MIGRATION.md) - Configuration management details
-- [ConfigManager.js](framework/config/ConfigManager.js) - Configuration manager source code
+- [ConfigManager.js](framework/config/config-manager.js) - Configuration manager source code

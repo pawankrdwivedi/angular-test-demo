@@ -1,6 +1,6 @@
 default:
   import:
-    - "src/step_definition/**/*.js"
+    - "src/step-definitions/**/*.js"
     - "src/support/**/*.js"
   format:
     - "summary"
